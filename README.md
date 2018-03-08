@@ -1,2 +1,2 @@
 # ecommerce-api
-E-commerce API para 
+E-commerce API utilizando Spring Boot e JWT
