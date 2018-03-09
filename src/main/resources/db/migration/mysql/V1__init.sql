@@ -1,76 +1,76 @@
-CREATE TABLE `funcionario` (
+CREATE TABLE `usuario` (
   `id` bigint(20) NOT NULL,
-  `cpf` varchar(255) NOT NULL,
-  `data_atualizacao` datetime NOT NULL,
-  `data_criacao` datetime NOT NULL,
-  `email` varchar(255) NOT NULL,
   `nome` varchar(255) NOT NULL,
-  `perfil` varchar(255) NOT NULL,
-  `qtd_horas_almoco` float DEFAULT NULL,
-  `qtd_horas_trabalho_dia` float DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
   `senha` varchar(255) NOT NULL,
-  `valor_hora` decimal(19,2) DEFAULT NULL,
-  `empresa_id` bigint(20) DEFAULT NULL
+  `perfil` varchar(255) NOT NULL,
+  `data_atualizacao` datetime NOT NULL,
+  `data_criacao` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `lancamento` (
+CREATE TABLE `pedido` (
   `id` bigint(20) NOT NULL,
-  `data` datetime NOT NULL,
+  `data_criacao` datetime NOT NULL,
+  `descricao` varchar(255) DEFAULT NULL,
+  `endereco_entrega` varchar(255) DEFAULT NULL,
+  `usuario_id` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `produto` (
+  `id` bigint(20) NOT NULL,
   `data_atualizacao` datetime NOT NULL,
   `data_criacao` datetime NOT NULL,
   `descricao` varchar(255) DEFAULT NULL,
-  `localizacao` varchar(255) DEFAULT NULL,
-  `tipo` varchar(255) NOT NULL,
-  `funcionario_id` bigint(20) DEFAULT NULL
+  `valor` double DEFAULT NULL,
+  `pedido_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 --
 -- Indexes for table `empresa`
 --
-ALTER TABLE `empresa`
+ALTER TABLE `usuario`
   ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `funcionario`
 --
-ALTER TABLE `funcionario`
+ALTER TABLE `pedido`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `FK4cm1kg523jlopyexjbmi6y54j` (`empresa_id`);
+  ADD KEY `FK4cm1kg523jlopyexjbmi6y54j` (`usuario_id`);
 
 --
 -- Indexes for table `lancamento`
 --
-ALTER TABLE `lancamento`
+ALTER TABLE `produto`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `FK46i4k5vl8wah7feutye9kbpi4` (`funcionario_id`);
+  ADD KEY `FK46i4k5vl8wah7feutye9kbpi4` (`pedido_id`);
 
 --
--- AUTO_INCREMENT for table `empresa`
+-- AUTO_INCREMENT for table `usuario`
 --
-ALTER TABLE `empresa`
+ALTER TABLE `usuario`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `funcionario`
+-- AUTO_INCREMENT for table `pedido`
 --
-ALTER TABLE `funcionario`
+ALTER TABLE `pedido`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `lancamento`
+-- AUTO_INCREMENT for table `produto`
 --
-ALTER TABLE `lancamento`
+ALTER TABLE `produto`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `funcionario`
+-- Constraints for table `pedido`
 --
-ALTER TABLE `funcionario`
-  ADD CONSTRAINT `FK4cm1kg523jlopyexjbmi6y54j` FOREIGN KEY (`empresa_id`) REFERENCES `empresa` (`id`);
+ALTER TABLE `pedido`
+  ADD CONSTRAINT `FK4cm1kg523jlopyexjbmi6y54j` FOREIGN KEY (`usuario_id`) REFERENCES `pedido` (`id`);
 
 --
--- Constraints for table `lancamento`
+-- Constraints for table `produto`
 --
-ALTER TABLE `lancamento`
-  ADD CONSTRAINT `FK46i4k5vl8wah7feutye9kbpi4` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`);
+ALTER TABLE `produto`
+  ADD CONSTRAINT `FK46i4k5vl8wah7feutye9kbpi4` FOREIGN KEY (`pedido_id`) REFERENCES `produto` (`id`);

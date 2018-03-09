@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class LancamentoControllerTest {
+public class ProdutoControllerTest {
 
 	@Autowired
 	private MockMvc mvc;

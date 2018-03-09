@@ -23,7 +23,7 @@ import com.concrete.ecommerce.api.services.EmpresaService;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class EmpresaServiceTest {
+public class ProdutoServiceTest {
 
 	@MockBean
 	private EmpresaRepository empresaRepository;

@@ -7,34 +7,26 @@ import com.concrete.ecommerce.api.entities.Usuario;
 public interface UsuarioService {
 	
 	/**
-	 * Persiste um funcionário na base de dados.
+	 * Persiste um usuário na base de dados.
 	 * 
-	 * @param funcionario
-	 * @return Funcionario
+	 * @param usuario
+	 * @return Usuario
 	 */
-	Usuario persistir(Usuario funcionario);
+	Usuario persistir(Usuario usuario);
 	
 	/**
-	 * Busca e retorna um funcionário dado um CPF.
-	 * 
-	 * @param cpf
-	 * @return Optional<Funcionario>
-	 */
-	Optional<Usuario> buscarPorCpf(String cpf);
-	
-	/**
-	 * Busca e retorna um funcionário dado um email.
+	 * Busca e retorna um usuário dado um email.
 	 * 
 	 * @param email
-	 * @return Optional<Funcionario>
+	 * @return Optional<Usuario>
 	 */
 	Optional<Usuario> buscarPorEmail(String email);
 	
 	/**
-	 * Busca e retorna um funcionário por ID.
+	 * Busca e retorna um usuário por ID.
 	 * 
 	 * @param id
-	 * @return Optional<Funcionario>
+	 * @return Optional<Usuario>
 	 */
 	Optional<Usuario> buscarPorId(Long id);
 

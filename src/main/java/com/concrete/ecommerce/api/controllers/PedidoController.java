@@ -30,15 +30,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.concrete.ecommerce.api.dtos.PedidoDto;
-import com.concrete.ecommerce.api.entities.Usuario;
 import com.concrete.ecommerce.api.entities.Pedido;
-import com.concrete.ecommerce.api.enums.TipoEnum;
+import com.concrete.ecommerce.api.entities.Usuario;
 import com.concrete.ecommerce.api.response.Response;
-import com.concrete.ecommerce.api.services.UsuarioService;
 import com.concrete.ecommerce.api.services.PedidoService;
+import com.concrete.ecommerce.api.services.UsuarioService;
 
 @RestController
-@RequestMapping("/api/lancamentos")
+@RequestMapping("/api/pedidos")
 @CrossOrigin(origins = "*")
 public class PedidoController {
 

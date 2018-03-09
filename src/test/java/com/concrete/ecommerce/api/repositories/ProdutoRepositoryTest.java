@@ -30,7 +30,7 @@ import com.concrete.ecommerce.api.utils.PasswordUtils;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class LancamentoRepositoryTest {
+public class ProdutoRepositoryTest {
 	
 	@Autowired
 	private ProdutoRepository lancamentoRepository;

@@ -1,6 +1,5 @@
 package com.concrete.ecommerce.api.controllers;
 
-import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ import com.concrete.ecommerce.api.services.UsuarioService;
 import com.concrete.ecommerce.api.utils.PasswordUtils;
 
 @RestController
-@RequestMapping("/api/funcionarios")
+@RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "*")
 public class UsuarioController {
 
@@ -90,17 +89,6 @@ public class UsuarioController {
 			funcionario.setEmail(funcionarioDto.getEmail());
 		}
 
-		funcionario.setQtdHorasAlmoco(null);
-		funcionarioDto.getQtdHorasAlmoco()
-				.ifPresent(qtdHorasAlmoco -> funcionario.setQtdHorasAlmoco(Float.valueOf(qtdHorasAlmoco)));
-
-		funcionario.setQtdHorasTrabalhoDia(null);
-		funcionarioDto.getQtdHorasTrabalhoDia()
-				.ifPresent(qtdHorasTrabDia -> funcionario.setQtdHorasTrabalhoDia(Float.valueOf(qtdHorasTrabDia)));
-
-		funcionario.setValorHora(null);
-		funcionarioDto.getValorHora().ifPresent(valorHora -> funcionario.setValorHora(new BigDecimal(valorHora)));
-
 		if (funcionarioDto.getSenha().isPresent()) {
 			funcionario.setSenha(PasswordUtils.gerarBCrypt(funcionarioDto.getSenha().get()));
 		}
@@ -117,12 +105,6 @@ public class UsuarioController {
 		funcionarioDto.setId(funcionario.getId());
 		funcionarioDto.setEmail(funcionario.getEmail());
 		funcionarioDto.setNome(funcionario.getNome());
-		funcionario.getQtdHorasAlmocoOpt().ifPresent(
-				qtdHorasAlmoco -> funcionarioDto.setQtdHorasAlmoco(Optional.of(Float.toString(qtdHorasAlmoco))));
-		funcionario.getQtdHorasTrabalhoDiaOpt().ifPresent(
-				qtdHorasTrabDia -> funcionarioDto.setQtdHorasTrabalhoDia(Optional.of(Float.toString(qtdHorasTrabDia))));
-		funcionario.getValorHoraOpt()
-				.ifPresent(valorHora -> funcionarioDto.setValorHora(Optional.of(valorHora.toString())));
 
 		return funcionarioDto;
 	}

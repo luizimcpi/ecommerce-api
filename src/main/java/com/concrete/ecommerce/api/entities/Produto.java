@@ -13,8 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "produto")
@@ -23,9 +21,8 @@ public class Produto implements Serializable {
 	private static final long serialVersionUID = 6524560251526772839L;
 
 	private Long id;
-	private Date data;
 	private String descricao;
-	private String localizacao;
+	private double valor;
 	private Date dataCriacao;
 	private Date dataAtualizacao;
 	private Pedido pedido;
@@ -43,17 +40,7 @@ public class Produto implements Serializable {
 		this.id = id;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "data", nullable = false)
-	public Date getData() {
-		return data;
-	}
-
-	public void setData(Date data) {
-		this.data = data;
-	}
-
-	@Column(name = "descricao", nullable = true)
+	@Column(name = "descricao", nullable = false)
 	public String getDescricao() {
 		return descricao;
 	}
@@ -62,13 +49,13 @@ public class Produto implements Serializable {
 		this.descricao = descricao;
 	}
 
-	@Column(name = "localizacao", nullable = true)
-	public String getLocalizacao() {
-		return localizacao;
+	@Column(name = "valor_produto", nullable = false)
+	public double getValor() {
+		return valor;
 	}
 
-	public void setLocalizacao(String localizacao) {
-		this.localizacao = localizacao;
+	public void setValor(double valor) {
+		this.valor = valor;
 	}
 
 	@Column(name = "data_criacao", nullable = false)
@@ -112,8 +99,8 @@ public class Produto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Produto [id=" + id + ", data=" + data + ", descricao=" + descricao + ", localizacao=" + localizacao
-				+ ", dataCriacao=" + dataCriacao + ", dataAtualizacao=" + dataAtualizacao + ", pedido=" + pedido + "]";
+		return "Produto [id=" + id + ", descricao=" + descricao + ", valor=" + valor + ", dataCriacao=" + dataCriacao
+				+ ", dataAtualizacao=" + dataAtualizacao + ", pedido=" + pedido + "]";
 	}
 
 }

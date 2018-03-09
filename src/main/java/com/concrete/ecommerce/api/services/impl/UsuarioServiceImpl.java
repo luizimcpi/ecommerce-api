@@ -17,26 +17,21 @@ public class UsuarioServiceImpl implements UsuarioService {
 	private static final Logger log = LoggerFactory.getLogger(UsuarioServiceImpl.class);
 
 	@Autowired
-	private UsuarioRepository funcionarioRepository;
+	private UsuarioRepository usuarioRepository;
 	
-	public Usuario persistir(Usuario funcionario) {
-		log.info("Persistindo funcionário: {}", funcionario);
-		return this.funcionarioRepository.save(funcionario);
-	}
-	
-	public Optional<Usuario> buscarPorCpf(String cpf) {
-		log.info("Buscando funcionário pelo CPF {}", cpf);
-		return Optional.ofNullable(this.funcionarioRepository.findByCpf(cpf));
+	public Usuario persistir(Usuario usuario) {
+		log.info("Persistindo usuário: {}", usuario);
+		return this.usuarioRepository.save(usuario);
 	}
 	
 	public Optional<Usuario> buscarPorEmail(String email) {
-		log.info("Buscando funcionário pelo email {}", email);
-		return Optional.ofNullable(this.funcionarioRepository.findByEmail(email));
+		log.info("Buscando usuário pelo email {}", email);
+		return Optional.ofNullable(this.usuarioRepository.findByEmail(email));
 	}
 	
 	public Optional<Usuario> buscarPorId(Long id) {
-		log.info("Buscando funcionário pelo IDl {}", id);
-		return Optional.ofNullable(this.funcionarioRepository.findOne(id));
+		log.info("Buscando usuário pelo IDl {}", id);
+		return Optional.ofNullable(this.usuarioRepository.findOne(id));
 	}
 
 }

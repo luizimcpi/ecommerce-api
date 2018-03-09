@@ -14,10 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "pedido")
@@ -26,11 +23,9 @@ public class Pedido implements Serializable {
 	private static final long serialVersionUID = 6524560251526772839L;
 
 	private Long id;
-	private Date data;
 	private String descricao;
-	private String localizacao;
+	private String enderecoEntrega;
 	private Date dataCriacao;
-	private Date dataAtualizacao;
 	private Usuario usuario;
 	private List<Produto> produtos;
 
@@ -47,16 +42,6 @@ public class Pedido implements Serializable {
 		this.id = id;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "data", nullable = false)
-	public Date getData() {
-		return data;
-	}
-
-	public void setData(Date data) {
-		this.data = data;
-	}
-
 	@Column(name = "descricao", nullable = true)
 	public String getDescricao() {
 		return descricao;
@@ -66,15 +51,6 @@ public class Pedido implements Serializable {
 		this.descricao = descricao;
 	}
 
-	@Column(name = "localizacao", nullable = true)
-	public String getLocalizacao() {
-		return localizacao;
-	}
-
-	public void setLocalizacao(String localizacao) {
-		this.localizacao = localizacao;
-	}
-
 	@Column(name = "data_criacao", nullable = false)
 	public Date getDataCriacao() {
 		return dataCriacao;
@@ -82,15 +58,6 @@ public class Pedido implements Serializable {
 
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
-	}
-
-	@Column(name = "data_atualizacao", nullable = false)
-	public Date getDataAtualizacao() {
-		return dataAtualizacao;
-	}
-
-	public void setDataAtualizacao(Date dataAtualizacao) {
-		this.dataAtualizacao = dataAtualizacao;
 	}
 
 	@OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -111,23 +78,24 @@ public class Pedido implements Serializable {
 		this.usuario = usuario;
 	}
 
-	@PreUpdate
-	public void preUpdate() {
-		dataAtualizacao = new Date();
+	@Column(name = "endereco_entrega", nullable = false)
+	public String getEnderecoEntrega() {
+		return enderecoEntrega;
+	}
+
+	public void setEnderecoEntrega(String enderecoEntrega) {
+		this.enderecoEntrega = enderecoEntrega;
 	}
 
 	@PrePersist
 	public void prePersist() {
 		final Date atual = new Date();
 		dataCriacao = atual;
-		dataAtualizacao = atual;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "Pedido [id=" + id + ", data=" + data + ", descricao=" + descricao + ", localizacao=" + localizacao
-				+ ", dataCriacao=" + dataCriacao + ", dataAtualizacao=" + dataAtualizacao + ", usuario=" + usuario
-				+ ", produtos=" + produtos + "]";
+		return "Pedido [id=" + id + ", descricao=" + descricao + ", enderecoEntrega=" + enderecoEntrega
+				+ ", dataCriacao=" + dataCriacao + ", usuario=" + usuario + ", produtos=" + produtos + "]";
 	}
-
 }

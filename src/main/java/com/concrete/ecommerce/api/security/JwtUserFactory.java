@@ -17,12 +17,12 @@ public class JwtUserFactory {
 	/**
 	 * Converte e gera um JwtUser com base nos dados de um funcionário.
 	 * 
-	 * @param funcionario
+	 * @param usuario
 	 * @return JwtUser
 	 */
-	public static JwtUser create(Usuario funcionario) {
-		return new JwtUser(funcionario.getId(), funcionario.getEmail(), funcionario.getSenha(),
-				mapToGrantedAuthorities(funcionario.getPerfil()));
+	public static JwtUser create(Usuario usuario) {
+		return new JwtUser(usuario.getId(), usuario.getEmail(), usuario.getSenha(),
+				mapToGrantedAuthorities(usuario.getPerfil()));
 	}
 
 	/**

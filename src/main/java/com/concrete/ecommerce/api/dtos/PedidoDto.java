@@ -2,16 +2,12 @@ package com.concrete.ecommerce.api.dtos;
 
 import java.util.Optional;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 public class PedidoDto {
-	
+
 	private Optional<Long> id = Optional.empty();
-	private String data;
-	private String tipo;
 	private String descricao;
-	private String localizacao;
-	private Long funcionarioId;
+	private String enderecoEntrega;
+	private Long usuarioId;
 
 	public PedidoDto() {
 	}
@@ -24,23 +20,6 @@ public class PedidoDto {
 		this.id = id;
 	}
 
-	@NotEmpty(message = "Data não pode ser vazia.")
-	public String getData() {
-		return data;
-	}
-
-	public void setData(String data) {
-		this.data = data;
-	}
-
-	public String getTipo() {
-		return tipo;
-	}
-
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
-
 	public String getDescricao() {
 		return descricao;
 	}
@@ -48,27 +27,27 @@ public class PedidoDto {
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-	
-	public String getLocalizacao() {
-		return localizacao;
+
+	public String getEnderecoEntrega() {
+		return enderecoEntrega;
 	}
 
-	public void setLocalizacao(String localizacao) {
-		this.localizacao = localizacao;
+	public void setEnderecoEntrega(String enderecoEntrega) {
+		this.enderecoEntrega = enderecoEntrega;
 	}
 
-	public Long getFuncionarioId() {
-		return funcionarioId;
+	public Long getUsuarioId() {
+		return usuarioId;
 	}
 
-	public void setFuncionarioId(Long funcionarioId) {
-		this.funcionarioId = funcionarioId;
+	public void setUsuarioId(Long usuarioId) {
+		this.usuarioId = usuarioId;
 	}
 
 	@Override
 	public String toString() {
-		return "LancamentoDto [id=" + id + ", data=" + data + ", tipo=" + tipo + ", descricao=" + descricao
-				+ ", localizacao=" + localizacao + ", funcionarioId=" + funcionarioId + "]";
+		return "PedidoDto [id=" + id + ", descricao=" + descricao + ", enderecoEntrega=" + enderecoEntrega
+				+ ", usuarioId=" + usuarioId + "]";
 	}
-	
+
 }

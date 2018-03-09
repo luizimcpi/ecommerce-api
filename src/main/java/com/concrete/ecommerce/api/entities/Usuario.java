@@ -1,10 +1,8 @@
 package com.concrete.ecommerce.api.entities;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,12 +13,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.concrete.ecommerce.api.enums.PerfilEnum;
 
@@ -34,7 +30,6 @@ public class Usuario implements Serializable {
 	private String nome;
 	private String email;
 	private String senha;
-	private String cpf;
 	private PerfilEnum perfil;
 	private Date dataCriacao;
 	private Date dataAtualizacao;
@@ -69,15 +64,6 @@ public class Usuario implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	@Column(name = "cpf", nullable = false)
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -139,12 +125,6 @@ public class Usuario implements Serializable {
         dataAtualizacao = atual;
     }
 
-	@Override
-	public String toString() {
-		return "Usuario [id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", cpf=" + cpf
-				+ ", perfil=" + perfil + ", dataCriacao=" + dataCriacao + ", dataAtualizacao=" + dataAtualizacao
-				+ ", pedidos=" + pedidos + "]";
-	}
 
 
 }

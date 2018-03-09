@@ -28,7 +28,7 @@ import com.concrete.ecommerce.api.services.EmpresaService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class EmpresaControllerTest {
+public class UsuarioControllerTest {
 
 	@Autowired
 	private MockMvc mvc;

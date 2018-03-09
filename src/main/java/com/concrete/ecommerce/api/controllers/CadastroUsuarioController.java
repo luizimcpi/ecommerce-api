@@ -1,8 +1,6 @@
 package com.concrete.ecommerce.api.controllers;
 
-import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -19,11 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.concrete.ecommerce.api.dtos.CadastroUsuarioDto;
-import com.concrete.ecommerce.api.entities.Empresa;
 import com.concrete.ecommerce.api.entities.Usuario;
 import com.concrete.ecommerce.api.enums.PerfilEnum;
 import com.concrete.ecommerce.api.response.Response;
-import com.concrete.ecommerce.api.services.EmpresaService;
 import com.concrete.ecommerce.api.services.UsuarioService;
 import com.concrete.ecommerce.api.utils.PasswordUtils;
 
@@ -35,110 +31,83 @@ public class CadastroUsuarioController {
 	private static final Logger log = LoggerFactory.getLogger(CadastroUsuarioController.class);
 	
 	@Autowired
-	private EmpresaService empresaService;
-	
-	@Autowired
-	private UsuarioService funcionarioService;
+	private UsuarioService usuarioService;
 
 	public CadastroUsuarioController() {
 	}
 
 	/**
-	 * Cadastra um funcionário pessoa física no sistema.
+	 * Cadastra um usuário no sistema.
 	 * 
-	 * @param cadastroPFDto
+	 * @param cadastroUsuarioDto
 	 * @param result
-	 * @return ResponseEntity<Response<CadastroPFDto>>
+	 * @return ResponseEntity<Response<CadastroUsuarioDto>>
 	 * @throws NoSuchAlgorithmException
 	 */
 	@PostMapping
-	public ResponseEntity<Response<CadastroUsuarioDto>> cadastrar(@Valid @RequestBody CadastroUsuarioDto cadastroPFDto,
+	public ResponseEntity<Response<CadastroUsuarioDto>> cadastrar(@Valid @RequestBody CadastroUsuarioDto cadastroUsuarioDto,
 			BindingResult result) throws NoSuchAlgorithmException {
-		log.info("Cadastrando PF: {}", cadastroPFDto.toString());
+		log.info("Cadastrando Usuario: {}", cadastroUsuarioDto.toString());
 		Response<CadastroUsuarioDto> response = new Response<CadastroUsuarioDto>();
 
-		validarDadosExistentes(cadastroPFDto, result);
-		Usuario funcionario = this.converterDtoParaFuncionario(cadastroPFDto, result);
+		validarDadosExistentes(cadastroUsuarioDto, result);
+		Usuario usuario = this.converterDtoParaUsuario(cadastroUsuarioDto, result);
 
 		if (result.hasErrors()) {
-			log.error("Erro validando dados de cadastro PF: {}", result.getAllErrors());
+			log.error("Erro validando dados de cadastro Usuario: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
 		
-		Optional<Empresa> empresa = this.empresaService.buscarPorCnpj(cadastroPFDto.getCnpj());
-		empresa.ifPresent(emp -> funcionario.setEmpresa(emp));
-		this.funcionarioService.persistir(funcionario);
+		this.usuarioService.persistir(usuario);
 
-		response.setData(this.converterCadastroPFDto(funcionario));
+		response.setData(this.converterCadastroUsuarioDto(usuario));
 		return ResponseEntity.ok(response);
 	}
 
 	/**
-	 * Verifica se a empresa está cadastrada e se o funcionário não existe na base de dados.
+	 * Verifica se o usuário não existe na base de dados.
 	 * 
-	 * @param cadastroPFDto
+	 * @param cadastroUsuarioDto
 	 * @param result
 	 */
-	private void validarDadosExistentes(CadastroUsuarioDto cadastroPFDto, BindingResult result) {
-		Optional<Empresa> empresa = this.empresaService.buscarPorCnpj(cadastroPFDto.getCnpj());
-		if (!empresa.isPresent()) {
-			result.addError(new ObjectError("empresa", "Empresa não cadastrada."));
-		}
-		
-		this.funcionarioService.buscarPorCpf(cadastroPFDto.getCpf())
-			.ifPresent(func -> result.addError(new ObjectError("funcionario", "CPF já existente.")));
-
-		this.funcionarioService.buscarPorEmail(cadastroPFDto.getEmail())
-			.ifPresent(func -> result.addError(new ObjectError("funcionario", "Email já existente.")));
+	private void validarDadosExistentes(CadastroUsuarioDto cadastroUsuarioDto, BindingResult result) {
+		this.usuarioService.buscarPorEmail(cadastroUsuarioDto.getEmail())
+			.ifPresent(func -> result.addError(new ObjectError("usuario", "Email já existente.")));
 	}
 
 	/**
-	 * Converte os dados do DTO para funcionário.
+	 * Converte os dados do DTO para usuário.
 	 * 
-	 * @param cadastroPFDto
+	 * @param cadastroUsuarioDto
 	 * @param result
 	 * @return Funcionario
 	 * @throws NoSuchAlgorithmException
 	 */
-	private Usuario converterDtoParaFuncionario(CadastroUsuarioDto cadastroPFDto, BindingResult result)
+	private Usuario converterDtoParaUsuario(CadastroUsuarioDto cadastroUsuarioDto, BindingResult result)
 			throws NoSuchAlgorithmException {
 		Usuario funcionario = new Usuario();
-		funcionario.setNome(cadastroPFDto.getNome());
-		funcionario.setEmail(cadastroPFDto.getEmail());
-		funcionario.setCpf(cadastroPFDto.getCpf());
+		funcionario.setNome(cadastroUsuarioDto.getNome());
+		funcionario.setEmail(cadastroUsuarioDto.getEmail());
 		funcionario.setPerfil(PerfilEnum.ROLE_USUARIO);
-		funcionario.setSenha(PasswordUtils.gerarBCrypt(cadastroPFDto.getSenha()));
-		cadastroPFDto.getQtdHorasAlmoco()
-				.ifPresent(qtdHorasAlmoco -> funcionario.setQtdHorasAlmoco(Float.valueOf(qtdHorasAlmoco)));
-		cadastroPFDto.getQtdHorasTrabalhoDia()
-				.ifPresent(qtdHorasTrabDia -> funcionario.setQtdHorasTrabalhoDia(Float.valueOf(qtdHorasTrabDia)));
-		cadastroPFDto.getValorHora().ifPresent(valorHora -> funcionario.setValorHora(new BigDecimal(valorHora)));
+		funcionario.setSenha(PasswordUtils.gerarBCrypt(cadastroUsuarioDto.getSenha()));
 
 		return funcionario;
 	}
 
 	/**
-	 * Popula o DTO de cadastro com os dados do funcionário e empresa.
+	 * Popula o DTO de cadastro com os dados do usuario.
 	 * 
-	 * @param funcionario
-	 * @return CadastroPFDto
+	 * @param usuario
+	 * @return cadastroUsuarioDto
 	 */
-	private CadastroUsuarioDto converterCadastroPFDto(Usuario funcionario) {
-		CadastroUsuarioDto cadastroPFDto = new CadastroUsuarioDto();
-		cadastroPFDto.setId(funcionario.getId());
-		cadastroPFDto.setNome(funcionario.getNome());
-		cadastroPFDto.setEmail(funcionario.getEmail());
-		cadastroPFDto.setCpf(funcionario.getCpf());
-		cadastroPFDto.setCnpj(funcionario.getEmpresa().getCnpj());
-		funcionario.getQtdHorasAlmocoOpt().ifPresent(qtdHorasAlmoco -> cadastroPFDto
-				.setQtdHorasAlmoco(Optional.of(Float.toString(qtdHorasAlmoco))));
-		funcionario.getQtdHorasTrabalhoDiaOpt().ifPresent(
-				qtdHorasTrabDia -> cadastroPFDto.setQtdHorasTrabalhoDia(Optional.of(Float.toString(qtdHorasTrabDia))));
-		funcionario.getValorHoraOpt()
-				.ifPresent(valorHora -> cadastroPFDto.setValorHora(Optional.of(valorHora.toString())));
+	private CadastroUsuarioDto converterCadastroUsuarioDto(Usuario usuario) {
+		CadastroUsuarioDto cadastroUsuarioDto = new CadastroUsuarioDto();
+		cadastroUsuarioDto.setId(usuario.getId());
+		cadastroUsuarioDto.setNome(usuario.getNome());
+		cadastroUsuarioDto.setEmail(usuario.getEmail());
 
-		return cadastroPFDto;
+		return cadastroUsuarioDto;
 	}
 
 }

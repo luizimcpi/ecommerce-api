@@ -27,7 +27,7 @@ import com.concrete.ecommerce.api.services.PedidoService;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class LancamentoServiceTest {
+public class PedidoServiceTest {
 
 	@MockBean
 	private ProdutoRepository lancamentoRepository;
