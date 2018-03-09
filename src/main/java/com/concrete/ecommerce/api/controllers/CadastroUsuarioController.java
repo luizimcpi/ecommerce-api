@@ -81,18 +81,18 @@ public class CadastroUsuarioController {
 	 * 
 	 * @param cadastroUsuarioDto
 	 * @param result
-	 * @return Funcionario
+	 * @return Usuario
 	 * @throws NoSuchAlgorithmException
 	 */
 	private Usuario converterDtoParaUsuario(CadastroUsuarioDto cadastroUsuarioDto, BindingResult result)
 			throws NoSuchAlgorithmException {
-		Usuario funcionario = new Usuario();
-		funcionario.setNome(cadastroUsuarioDto.getNome());
-		funcionario.setEmail(cadastroUsuarioDto.getEmail());
-		funcionario.setPerfil(PerfilEnum.ROLE_USUARIO);
-		funcionario.setSenha(PasswordUtils.gerarBCrypt(cadastroUsuarioDto.getSenha()));
+		Usuario usuario = new Usuario();
+		usuario.setNome(cadastroUsuarioDto.getNome());
+		usuario.setEmail(cadastroUsuarioDto.getEmail());
+		usuario.setPerfil(PerfilEnum.ROLE_USUARIO);
+		usuario.setSenha(PasswordUtils.gerarBCrypt(cadastroUsuarioDto.getSenha()));
 
-		return funcionario;
+		return usuario;
 	}
 
 	/**

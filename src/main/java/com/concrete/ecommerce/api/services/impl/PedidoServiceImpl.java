@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.concrete.ecommerce.api.entities.Pedido;
-import com.concrete.ecommerce.api.repositories.ProdutoRepository;
+import com.concrete.ecommerce.api.repositories.PedidoRepository;
 import com.concrete.ecommerce.api.services.PedidoService;
 
 @Service
@@ -21,28 +21,28 @@ public class PedidoServiceImpl implements PedidoService {
 	private static final Logger log = LoggerFactory.getLogger(PedidoServiceImpl.class);
 
 	@Autowired
-	private ProdutoRepository lancamentoRepository;
+	private PedidoRepository pedidoRepository;
 
-	public Page<Pedido> buscarPorFuncionarioId(Long funcionarioId, PageRequest pageRequest) {
-		log.info("Buscando lançamentos para o funcionário ID {}", funcionarioId);
-		return this.lancamentoRepository.findByFuncionarioId(funcionarioId, pageRequest);
+	public Page<Pedido> buscarPorUsuarioId(Long usuarioId, PageRequest pageRequest) {
+		log.info("Buscando pedidos para o usuário ID {}", usuarioId);
+		return this.pedidoRepository.findByUsuarioId(usuarioId, pageRequest);
 	}
 	
-	@Cacheable("lancamentoPorId")
+	@Cacheable("pedidoPorId")
 	public Optional<Pedido> buscarPorId(Long id) {
-		log.info("Buscando um lançamento pelo ID {}", id);
-		return Optional.ofNullable(this.lancamentoRepository.findOne(id));
+		log.info("Buscando um pedido pelo ID {}", id);
+		return Optional.ofNullable(this.pedidoRepository.findOne(id));
 	}
 	
-	@CachePut("lancamentoPorId")
-	public Pedido persistir(Pedido lancamento) {
-		log.info("Persistindo o lançamento: {}", lancamento);
-		return this.lancamentoRepository.save(lancamento);
+	@CachePut("pedidoPorId")
+	public Pedido persistir(Pedido pedido) {
+		log.info("Persistindo o pedido: {}", pedido);
+		return this.pedidoRepository.save(pedido);
 	}
 	
 	public void remover(Long id) {
-		log.info("Removendo o lançamento ID {}", id);
-		this.lancamentoRepository.delete(id);
+		log.info("Removendo o pedido ID {}", id);
+		this.pedidoRepository.delete(id);
 	}
 
 }

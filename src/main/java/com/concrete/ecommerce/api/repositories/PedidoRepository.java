@@ -15,11 +15,11 @@ import com.concrete.ecommerce.api.entities.Pedido;
 
 @Transactional(readOnly = true)
 @NamedQueries({
-		@NamedQuery(name = "LancamentoRepository.findByFuncionarioId", 
-				query = "SELECT lanc FROM Lancamento lanc WHERE lanc.funcionario.id = :funcionarioId") })
+		@NamedQuery(name = "PedidoRepository.findByUsuarioId", 
+				query = "SELECT pedido FROM Pedido pedido WHERE pedido.usuario.id = :usuarioId") })
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-	List<Pedido> findByFuncionarioId(@Param("funcionarioId") Long funcionarioId);
+	List<Pedido> findByUsuarioId(@Param("usuarioId") Long usuarioId);
 
-	Page<Pedido> findByFuncionarioId(@Param("funcionarioId") Long funcionarioId, Pageable pageable);
+	Page<Pedido> findByUsuarioId(@Param("usuarioId") Long usuarioId, Pageable pageable);
 }

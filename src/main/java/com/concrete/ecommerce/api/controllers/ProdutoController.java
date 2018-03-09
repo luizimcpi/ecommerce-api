@@ -52,7 +52,7 @@ public class ProdutoController {
 	@Value("${paginacao.qtd_por_pagina}")
 	private int qtdPorPagina;
 
-	public PedidoController() {
+	public ProdutoController() {
 	}
 
 	/**

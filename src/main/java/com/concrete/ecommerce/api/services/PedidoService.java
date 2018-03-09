@@ -10,13 +10,13 @@ import com.concrete.ecommerce.api.entities.Pedido;
 public interface PedidoService {
 
 	/**
-	 * Retorna uma lista paginada de lançamentos de um determinado funcionário.
+	 * Retorna uma lista paginada de pedidos de um determinado usuário.
 	 * 
-	 * @param funcionarioId
+	 * @param usuarioId
 	 * @param pageRequest
 	 * @return Page<Lancamento>
 	 */
-	Page<Pedido> buscarPorFuncionarioId(Long funcionarioId, PageRequest pageRequest);
+	Page<Pedido> buscarPorUsuarioId(Long usuarioId, PageRequest pageRequest);
 	
 	/**
 	 * Retorna um lançamento por ID.
@@ -35,7 +35,7 @@ public interface PedidoService {
 	Pedido persistir(Pedido lancamento);
 	
 	/**
-	 * Remove um lançamento da base de dados.
+	 * Remove um pedido da base de dados.
 	 * 
 	 * @param id
 	 */

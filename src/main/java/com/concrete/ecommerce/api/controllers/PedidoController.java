@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +44,11 @@ public class PedidoController {
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Autowired
-	private PedidoService lancamentoService;
+	private PedidoService pedidoService;
 
 	@Autowired
-	private UsuarioService funcionarioService;
-	
+	private UsuarioService usuarioService;
+
 	@Value("${paginacao.qtd_por_pagina}")
 	private int qtdPorPagina;
 
@@ -57,74 +56,73 @@ public class PedidoController {
 	}
 
 	/**
-	 * Retorna a listagem de lançamentos de um funcionário.
+	 * Retorna a listagem de pedidos de um usuário.
 	 * 
-	 * @param funcionarioId
-	 * @return ResponseEntity<Response<LancamentoDto>>
+	 * @param usuarioId
+	 * @return ResponseEntity<Response<PedidoDto>>
 	 */
-	@GetMapping(value = "/funcionario/{funcionarioId}")
-	public ResponseEntity<Response<Page<PedidoDto>>> listarPorFuncionarioId(
-			@PathVariable("funcionarioId") Long funcionarioId,
+	@GetMapping(value = "/usuario/{usuarioId}")
+	public ResponseEntity<Response<Page<PedidoDto>>> listarPorUsuarioId(@PathVariable("usuarioId") Long usuarioId,
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
-		log.info("Buscando lançamentos por ID do funcionário: {}, página: {}", funcionarioId, pag);
+		log.info("Buscando lançamentos por ID do usuário: {}, página: {}", usuarioId, pag);
 		Response<Page<PedidoDto>> response = new Response<Page<PedidoDto>>();
 
 		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina, Direction.valueOf(dir), ord);
-		Page<Pedido> lancamentos = this.lancamentoService.buscarPorFuncionarioId(funcionarioId, pageRequest);
-		Page<PedidoDto> lancamentosDto = lancamentos.map(lancamento -> this.converterLancamentoDto(lancamento));
+		Page<Pedido> pedidos = this.pedidoService.buscarPorUsuarioId(usuarioId, pageRequest);
+		Page<PedidoDto> pedidosDto = pedidos.map(pedido -> this.converterPedidoDto(pedido));
 
-		response.setData(lancamentosDto);
+		response.setData(pedidosDto);
 		return ResponseEntity.ok(response);
 	}
 
 	/**
-	 * Retorna um lançamento por ID.
+	 * Retorna um pedido por ID.
 	 * 
 	 * @param id
-	 * @return ResponseEntity<Response<LancamentoDto>>
+	 * @return ResponseEntity<Response<PedidoDto>>
 	 */
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Response<PedidoDto>> listarPorId(@PathVariable("id") Long id) {
-		log.info("Buscando lançamento por ID: {}", id);
+		log.info("Buscando pedido por ID: {}", id);
 		Response<PedidoDto> response = new Response<PedidoDto>();
-		Optional<Pedido> lancamento = this.lancamentoService.buscarPorId(id);
+		Optional<Pedido> pedido = this.pedidoService.buscarPorId(id);
 
-		if (!lancamento.isPresent()) {
-			log.info("Lançamento não encontrado para o ID: {}", id);
-			response.getErrors().add("Lançamento não encontrado para o id " + id);
+		if (!pedido.isPresent()) {
+			log.info("Pedido não encontrado para o ID: {}", id);
+			response.getErrors().add("Pedido não encontrado para o id " + id);
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		response.setData(this.converterLancamentoDto(lancamento.get()));
+		response.setData(this.converterPedidoDto(pedido.get()));
 		return ResponseEntity.ok(response);
 	}
 
 	/**
-	 * Adiciona um novo lançamento.
+	 * Adiciona um novo pedido.
 	 * 
-	 * @param lancamento
+	 * @param pedido
 	 * @param result
-	 * @return ResponseEntity<Response<LancamentoDto>>
-	 * @throws ParseException 
+	 * @return ResponseEntity<Response<PedidoDto>>
+	 * @throws ParseException
 	 */
 	@PostMapping
-	public ResponseEntity<Response<PedidoDto>> adicionar(@Valid @RequestBody PedidoDto lancamentoDto,
-			BindingResult result) throws ParseException {
-		log.info("Adicionando lançamento: {}", lancamentoDto.toString());
+	public ResponseEntity<Response<PedidoDto>> adicionar(@Valid @RequestBody PedidoDto pedidoDto, BindingResult result)
+			throws ParseException {
+		log.info("Adicionando pedido: {}", pedidoDto.toString());
 		Response<PedidoDto> response = new Response<PedidoDto>();
-		validarFuncionario(lancamentoDto, result);
-		Pedido lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
+		validarUsuario(pedidoDto, result);
+		Pedido pedido = this.converterDtoParaPedido(pedidoDto, result);
 
 		if (result.hasErrors()) {
-			log.error("Erro validando lançamento: {}", result.getAllErrors());
+			log.error("Erro validando pedido: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		lancamento = this.lancamentoService.persistir(lancamento);
-		response.setData(this.converterLancamentoDto(lancamento));
+		pedido = this.pedidoService.persistir(pedido);
+		response.setData(this.converterPedidoDto(pedido));
 		return ResponseEntity.ok(response);
 	}
 
@@ -132,125 +130,117 @@ public class PedidoController {
 	 * Atualiza os dados de um lançamento.
 	 * 
 	 * @param id
-	 * @param lancamentoDto
-	 * @return ResponseEntity<Response<Lancamento>>
-	 * @throws ParseException 
+	 * @param pedidoDto
+	 * @return ResponseEntity<Response<Pedido>>
+	 * @throws ParseException
 	 */
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Response<PedidoDto>> atualizar(@PathVariable("id") Long id,
-			@Valid @RequestBody PedidoDto lancamentoDto, BindingResult result) throws ParseException {
-		log.info("Atualizando lançamento: {}", lancamentoDto.toString());
+			@Valid @RequestBody PedidoDto pedidoDto, BindingResult result) throws ParseException {
+		log.info("Atualizando lançamento: {}", pedidoDto.toString());
 		Response<PedidoDto> response = new Response<PedidoDto>();
-		validarFuncionario(lancamentoDto, result);
-		lancamentoDto.setId(Optional.of(id));
-		Pedido lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
+		validarUsuario(pedidoDto, result);
+		pedidoDto.setId(Optional.of(id));
+		Pedido pedido = this.converterDtoParaPedido(pedidoDto, result);
 
 		if (result.hasErrors()) {
-			log.error("Erro validando lançamento: {}", result.getAllErrors());
+			log.error("Erro validando pedido: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		lancamento = this.lancamentoService.persistir(lancamento);
-		response.setData(this.converterLancamentoDto(lancamento));
+		pedido = this.pedidoService.persistir(pedido);
+		response.setData(this.converterPedidoDto(pedido));
 		return ResponseEntity.ok(response);
 	}
 
 	/**
-	 * Remove um lançamento por ID.
+	 * Remove um pedido por ID.
 	 * 
 	 * @param id
-	 * @return ResponseEntity<Response<Lancamento>>
+	 * @return ResponseEntity<Response<Pedido>> TODO remover essa lógica daqui
+	 *         passar para um component
 	 */
 	@DeleteMapping(value = "/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id) {
-		log.info("Removendo lançamento: {}", id);
+		log.info("Removendo pedido: {}", id);
 		Response<String> response = new Response<String>();
-		Optional<Pedido> lancamento = this.lancamentoService.buscarPorId(id);
+		Optional<Pedido> pedido = this.pedidoService.buscarPorId(id);
 
-		if (!lancamento.isPresent()) {
-			log.info("Erro ao remover devido ao lançamento ID: {} ser inválido.", id);
-			response.getErrors().add("Erro ao remover lançamento. Registro não encontrado para o id " + id);
+		if (!pedido.isPresent()) {
+			log.info("Erro ao remover devido ao pedido ID: {} ser inválido.", id);
+			response.getErrors().add("Erro ao remover pedido. Registro não encontrado para o id " + id);
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		this.lancamentoService.remover(id);
+		this.pedidoService.remover(id);
 		return ResponseEntity.ok(new Response<String>());
 	}
 
 	/**
-	 * Valida um funcionário, verificando se ele é existente e válido no
-	 * sistema.
+	 * Valida um usuário, verificando se ele é existente e válido no sistema.
 	 * 
-	 * @param lancamentoDto
+	 * @param pedidoDto
 	 * @param result
 	 */
-	private void validarFuncionario(PedidoDto lancamentoDto, BindingResult result) {
-		if (lancamentoDto.getFuncionarioId() == null) {
-			result.addError(new ObjectError("funcionario", "Funcionário não informado."));
+	private void validarUsuario(PedidoDto pedidoDto, BindingResult result) {
+		if (pedidoDto.getUsuarioId() == null) {
+			result.addError(new ObjectError("usuario", "Usuário não informado."));
 			return;
 		}
 
-		log.info("Validando funcionário id {}: ", lancamentoDto.getFuncionarioId());
-		Optional<Usuario> funcionario = this.funcionarioService.buscarPorId(lancamentoDto.getFuncionarioId());
-		if (!funcionario.isPresent()) {
-			result.addError(new ObjectError("funcionario", "Funcionário não encontrado. ID inexistente."));
+		log.info("Validando usuário id {}: ", pedidoDto.getUsuarioId());
+		Optional<Usuario> usuario = this.usuarioService.buscarPorId(pedidoDto.getUsuarioId());
+		if (!usuario.isPresent()) {
+			result.addError(new ObjectError("usuario", "Usuário não encontrado. ID inexistente."));
 		}
 	}
 
 	/**
-	 * Converte uma entidade lançamento para seu respectivo DTO.
+	 * Converte uma entidade pedido para seu respectivo DTO.
 	 * 
-	 * @param lancamento
-	 * @return LancamentoDto
+	 * @param pedido
+	 * @return PedidoDto TODO remover essa lógica daqui passar para um component
 	 */
-	private PedidoDto converterLancamentoDto(Pedido lancamento) {
-		PedidoDto lancamentoDto = new PedidoDto();
-		lancamentoDto.setId(Optional.of(lancamento.getId()));
-		lancamentoDto.setData(this.dateFormat.format(lancamento.getData()));
-		lancamentoDto.setTipo(lancamento.getTipo().toString());
-		lancamentoDto.setDescricao(lancamento.getDescricao());
-		lancamentoDto.setLocalizacao(lancamento.getLocalizacao());
-		lancamentoDto.setFuncionarioId(lancamento.getFuncionario().getId());
+	private PedidoDto converterPedidoDto(Pedido pedido) {
+		PedidoDto pedidoDto = new PedidoDto();
+		pedidoDto.setId(Optional.of(pedido.getId()));
+		pedidoDto.setDescricao(pedido.getDescricao());
+		pedidoDto.setEnderecoEntrega(pedido.getEnderecoEntrega());
+		pedidoDto.setUsuarioId(pedido.getUsuario().getId());
 
-		return lancamentoDto;
+		return pedidoDto;
 	}
 
 	/**
-	 * Converte um LancamentoDto para uma entidade Lancamento.
+	 * Converte um PedidoDto para uma entidade Pedido.
 	 * 
-	 * @param lancamentoDto
+	 * @param pedidoDto
 	 * @param result
-	 * @return Lancamento
-	 * @throws ParseException 
+	 * @return Pedido
+	 * @throws ParseException
+	 *             TODO remover essa lógica daqui passar para um component
 	 */
-	private Pedido converterDtoParaLancamento(PedidoDto lancamentoDto, BindingResult result) throws ParseException {
-		Pedido lancamento = new Pedido();
+	private Pedido converterDtoParaPedido(PedidoDto pedidoDto, BindingResult result) throws ParseException {
+		Pedido pedido = new Pedido();
 
-		if (lancamentoDto.getId().isPresent()) {
-			Optional<Pedido> lanc = this.lancamentoService.buscarPorId(lancamentoDto.getId().get());
-			if (lanc.isPresent()) {
-				lancamento = lanc.get();
+		if (pedidoDto.getId().isPresent()) {
+			Optional<Pedido> ped = this.pedidoService.buscarPorId(pedidoDto.getId().get());
+			if (ped.isPresent()) {
+				pedido = ped.get();
 			} else {
-				result.addError(new ObjectError("lancamento", "Lançamento não encontrado."));
+				result.addError(new ObjectError("pedido", "Pedido não encontrado."));
 			}
 		} else {
-			lancamento.setFuncionario(new Usuario());
-			lancamento.getFuncionario().setId(lancamentoDto.getFuncionarioId());
+			pedido.setUsuario(new Usuario());
+			pedido.getUsuario().setId(pedidoDto.getUsuarioId());
 		}
 
-		lancamento.setDescricao(lancamentoDto.getDescricao());
-		lancamento.setLocalizacao(lancamentoDto.getLocalizacao());
-		lancamento.setData(this.dateFormat.parse(lancamentoDto.getData()));
+		pedido.setDescricao(pedidoDto.getDescricao());
+		pedido.setEnderecoEntrega(pedidoDto.getEnderecoEntrega());
 
-		if (EnumUtils.isValidEnum(TipoEnum.class, lancamentoDto.getTipo())) {
-			lancamento.setTipo(TipoEnum.valueOf(lancamentoDto.getTipo()));
-		} else {
-			result.addError(new ObjectError("tipo", "Tipo inválido."));
-		}
-
-		return lancamento;
+		return pedido;
 	}
 
 }
