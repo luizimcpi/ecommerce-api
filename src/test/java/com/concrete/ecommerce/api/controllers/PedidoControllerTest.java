@@ -53,7 +53,7 @@ public class PedidoControllerTest {
 	
 	@Test
 	@WithMockUser
-	public void testCadastrarLancamento() throws Exception {
+	public void testCadastrarPedido() throws Exception {
 		Pedido pedido = obterDadosPedido();
 		BDDMockito.given(this.usuarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Usuario()));
 		BDDMockito.given(this.pedidoService.persistir(Mockito.any(Pedido.class))).willReturn(pedido);
@@ -119,6 +119,7 @@ public class PedidoControllerTest {
 		pedido.setId(ID_PEDIDO);
 		pedido.setDescricao(DESCRICAO_PEDIDO);
 		pedido.setEnderecoEntrega(ENDERECO_PEDIDO);
+		pedido.setUsuario(new Usuario());
 		pedido.getUsuario().setId(ID_USUARIO);
 		return pedido;
 	}	

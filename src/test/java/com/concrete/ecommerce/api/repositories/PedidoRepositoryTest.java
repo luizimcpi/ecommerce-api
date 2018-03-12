@@ -66,11 +66,11 @@ public class PedidoRepositoryTest {
 		Pedido pedido = new Pedido();
 		pedido.setDescricao("Novo Pedido");
 		pedido.setEnderecoEntrega("Avenida Nações Unidas, 11541");
-		List<Produto> produtos = new ArrayList<>();
-		Produto produto = new Produto();
-		produto.setValor(15.80);
-		produtos.add(produto);
-		pedido.setProdutos(produtos);
+//		List<Produto> produtos = new ArrayList<>();
+//		Produto produto = new Produto();
+//		produto.setValor(15.80);
+//		produtos.add(produto);
+//		pedido.setProdutos(produtos);
 		pedido.setUsuario(usuario);
 		return pedido;
 	}
