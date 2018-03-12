@@ -2,9 +2,9 @@
 E-commerce API utilizando Spring Boot e JWT
 
 Build Status
-```
-![Build Status](https://travis-ci.org/luizimcpi/ecommerce-api.svg?branch=master)
-```
+
+[![Build Status](https://travis-ci.org/luizimcpi/ecommerce-api.svg?branch=master)]
+
 Configurações de DB
 ```
 Criar "e-commerce" schema no mysql veja mais detalhes no arquivo application.properties 
@@ -56,4 +56,9 @@ Method -> GET
 Headers
 Authorization -> Bearer + token gerado no auth
 Content-Type -> application/json
+```
+
+Swagger
+```
+http://localhost:8080/swagger-ui.html
 ```
