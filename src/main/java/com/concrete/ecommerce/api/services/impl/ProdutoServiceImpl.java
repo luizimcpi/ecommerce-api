@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.concrete.ecommerce.api.entities.Produto;
@@ -37,5 +39,12 @@ public class ProdutoServiceImpl implements ProdutoService {
 		log.info("Removendo o produto ID {}", id);
 		this.produtoRepository.delete(id);
 	}
+
+	@Override
+	public Page<Produto> buscarTodos(PageRequest pageRequest) {
+		log.info("Buscando todos os produtos");
+		return this.produtoRepository.findAll(pageRequest);
+	}
+
 
 }

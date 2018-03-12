@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.concrete.ecommerce.api.dtos.ProdutoDto;
@@ -44,6 +48,28 @@ public class ProdutoController {
 	}
 
 
+	/**
+	 * Retorna a listagem de produtos .
+	 * 
+	 * @param usuarioId
+	 * @return ResponseEntity<Response<ProdutoDto>>
+	 */
+	@GetMapping
+	public ResponseEntity<Response<Page<ProdutoDto>>> listarProdutos(
+			@RequestParam(value = "pag", defaultValue = "0") int pag,
+			@RequestParam(value = "ord", defaultValue = "id") String ord,
+			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
+		log.info("Buscando produtos, página: {}", pag);
+		Response<Page<ProdutoDto>> response = new Response<Page<ProdutoDto>>();
+
+		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina, Direction.valueOf(dir), ord);
+		Page<Produto> produtos = this.produtoService.buscarTodos(pageRequest);
+		Page<ProdutoDto> produtosDto = produtos.map(produto -> this.converterProdutoDto(produto));
+
+		response.setData(produtosDto);
+		return ResponseEntity.ok(response);
+	}
+	
 	/**
 	 * Retorna um produto por ID.
 	 * 

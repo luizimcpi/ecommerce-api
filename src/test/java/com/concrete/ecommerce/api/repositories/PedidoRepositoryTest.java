@@ -3,7 +3,6 @@ package com.concrete.ecommerce.api.repositories;
 import static org.junit.Assert.assertEquals;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -18,7 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.concrete.ecommerce.api.entities.Pedido;
-import com.concrete.ecommerce.api.entities.Produto;
 import com.concrete.ecommerce.api.entities.Usuario;
 import com.concrete.ecommerce.api.enums.PerfilEnum;
 import com.concrete.ecommerce.api.utils.PasswordUtils;

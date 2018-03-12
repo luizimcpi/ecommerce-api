@@ -1,7 +1,6 @@
 package com.concrete.ecommerce.api.controllers;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -41,7 +40,6 @@ import com.concrete.ecommerce.api.services.UsuarioService;
 public class PedidoController {
 
 	private static final Logger log = LoggerFactory.getLogger(PedidoController.class);
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Autowired
 	private PedidoService pedidoService;
@@ -66,7 +64,7 @@ public class PedidoController {
 			@RequestParam(value = "pag", defaultValue = "0") int pag,
 			@RequestParam(value = "ord", defaultValue = "id") String ord,
 			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
-		log.info("Buscando lançamentos por ID do usuário: {}, página: {}", usuarioId, pag);
+		log.info("Buscando produtos por ID do usuário: {}, página: {}", usuarioId, pag);
 		Response<Page<PedidoDto>> response = new Response<Page<PedidoDto>>();
 
 		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina, Direction.valueOf(dir), ord);

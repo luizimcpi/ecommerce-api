@@ -21,7 +21,7 @@ CREATE TABLE `produto` (
   `data_atualizacao` datetime NOT NULL,
   `data_criacao` datetime NOT NULL,
   `descricao` varchar(255) DEFAULT NULL,
-  `valor` double DEFAULT NULL,
+  `valor_produto` double DEFAULT NULL,
   `pedido_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --

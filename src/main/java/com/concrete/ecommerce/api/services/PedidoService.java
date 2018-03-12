@@ -14,25 +14,25 @@ public interface PedidoService {
 	 * 
 	 * @param usuarioId
 	 * @param pageRequest
-	 * @return Page<Lancamento>
+	 * @return Page<Pedido>
 	 */
 	Page<Pedido> buscarPorUsuarioId(Long usuarioId, PageRequest pageRequest);
 	
 	/**
-	 * Retorna um lançamento por ID.
+	 * Retorna um pedido por ID.
 	 * 
 	 * @param id
-	 * @return Optional<Lancamento>
+	 * @return Optional<Pedido>
 	 */
 	Optional<Pedido> buscarPorId(Long id);
 	
 	/**
-	 * Persiste um lançamento na base de dados.
+	 * Persiste um pedido na base de dados.
 	 * 
-	 * @param lancamento
-	 * @return Lancamento
+	 * @param pedido
+	 * @return Pedido
 	 */
-	Pedido persistir(Pedido lancamento);
+	Pedido persistir(Pedido pedido);
 	
 	/**
 	 * Remove um pedido da base de dados.
