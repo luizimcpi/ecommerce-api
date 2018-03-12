@@ -10,6 +10,11 @@ Configurações de DB
 Criar "e-commerce" schema no mysql veja mais detalhes no arquivo application.properties 
 ```
 
+Rodar a aplicação
+```
+mvn spring-boot:run
+```
+
 Cadastrar Usuário
 ```
 URL - > http://localhost:8080/api/cadastrar-usuario
