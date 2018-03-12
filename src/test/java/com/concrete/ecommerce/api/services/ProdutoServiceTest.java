@@ -16,9 +16,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.concrete.ecommerce.api.entities.Empresa;
-import com.concrete.ecommerce.api.repositories.EmpresaRepository;
-import com.concrete.ecommerce.api.services.EmpresaService;
+import com.concrete.ecommerce.api.entities.Produto;
+import com.concrete.ecommerce.api.repositories.ProdutoRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -26,31 +25,28 @@ import com.concrete.ecommerce.api.services.EmpresaService;
 public class ProdutoServiceTest {
 
 	@MockBean
-	private EmpresaRepository empresaRepository;
+	private ProdutoRepository produtoRepository;
 
 	@Autowired
-	private EmpresaService empresaService;
+	private ProdutoService produtoService;
 
-	private static final String CNPJ = "51463645000100";
 
 	@Before
 	public void setUp() throws Exception {
-		BDDMockito.given(this.empresaRepository.findByCnpj(Mockito.anyString())).willReturn(new Empresa());
-		BDDMockito.given(this.empresaRepository.save(Mockito.any(Empresa.class))).willReturn(new Empresa());
+		BDDMockito.given(this.produtoRepository.findOne(Mockito.anyLong())).willReturn(new Produto());
+		BDDMockito.given(this.produtoRepository.save(Mockito.any(Produto.class))).willReturn(new Produto());
 	}
 
 	@Test
-	public void testBuscarEmpresaPorCnpj() {
-		Optional<Empresa> empresa = this.empresaService.buscarPorCnpj(CNPJ);
-
-		assertTrue(empresa.isPresent());
+	public void testBuscarProdutoPorId() {
+		Optional<Produto> produto = this.produtoService.buscarPorId(1L);
+		assertTrue(produto.isPresent());
 	}
 	
 	@Test
-	public void testPersistirEmpresa() {
-		Empresa empresa = this.empresaService.persistir(new Empresa());
-
-		assertNotNull(empresa);
+	public void testPersistirProduto() {
+		Produto produto = this.produtoService.persistir(new Produto());
+		assertNotNull(produto);
 	}
 
 }

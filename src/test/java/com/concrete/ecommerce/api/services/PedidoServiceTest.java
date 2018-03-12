@@ -21,8 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.concrete.ecommerce.api.entities.Pedido;
-import com.concrete.ecommerce.api.repositories.ProdutoRepository;
-import com.concrete.ecommerce.api.services.PedidoService;
+import com.concrete.ecommerce.api.repositories.PedidoRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -30,39 +29,36 @@ import com.concrete.ecommerce.api.services.PedidoService;
 public class PedidoServiceTest {
 
 	@MockBean
-	private ProdutoRepository lancamentoRepository;
+	private PedidoRepository pedidoRepository;
 
 	@Autowired
-	private PedidoService lancamentoService;
+	private PedidoService pedidoService;
 
 	@Before
 	public void setUp() throws Exception {
 		BDDMockito
-				.given(this.lancamentoRepository.findByFuncionarioId(Mockito.anyLong(), Mockito.any(PageRequest.class)))
+				.given(this.pedidoRepository.findByUsuarioId(Mockito.anyLong(), Mockito.any(PageRequest.class)))
 				.willReturn(new PageImpl<Pedido>(new ArrayList<Pedido>()));
-		BDDMockito.given(this.lancamentoRepository.findOne(Mockito.anyLong())).willReturn(new Pedido());
-		BDDMockito.given(this.lancamentoRepository.save(Mockito.any(Pedido.class))).willReturn(new Pedido());
+		BDDMockito.given(this.pedidoRepository.findOne(Mockito.anyLong())).willReturn(new Pedido());
+		BDDMockito.given(this.pedidoRepository.save(Mockito.any(Pedido.class))).willReturn(new Pedido());
 	}
 
 	@Test
-	public void testBuscarLancamentoPorFuncionarioId() {
-		Page<Pedido> lancamento = this.lancamentoService.buscarPorFuncionarioId(1L, new PageRequest(0, 10));
-
-		assertNotNull(lancamento);
+	public void testBuscarPedidoPorUsuarioId() {
+		Page<Pedido> pedido = this.pedidoService.buscarPorUsuarioId(1L, new PageRequest(0, 10));
+		assertNotNull(pedido);
 	}
 
 	@Test
 	public void testBuscarLancamentoPorId() {
-		Optional<Pedido> lancamento = this.lancamentoService.buscarPorId(1L);
-
-		assertTrue(lancamento.isPresent());
+		Optional<Pedido> pedido = this.pedidoService.buscarPorId(1L);
+		assertTrue(pedido.isPresent());
 	}
 
 	@Test
 	public void testPersistirLancamento() {
-		Pedido lancamento = this.lancamentoService.persistir(new Pedido());
-
-		assertNotNull(lancamento);
+		Pedido pedido = this.pedidoService.persistir(new Pedido());
+		assertNotNull(pedido);
 	}
 
 }

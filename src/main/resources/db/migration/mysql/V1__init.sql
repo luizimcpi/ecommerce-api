@@ -38,7 +38,7 @@ ALTER TABLE `pedido`
   ADD KEY `FK4cm1kg523jlopyexjbmi6y54j` (`usuario_id`);
 
 --
--- Indexes for table `lancamento`
+-- Indexes for table `produto`
 --
 ALTER TABLE `produto`
   ADD PRIMARY KEY (`id`),

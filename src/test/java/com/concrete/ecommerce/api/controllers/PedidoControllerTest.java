@@ -3,8 +3,6 @@ package com.concrete.ecommerce.api.controllers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -23,11 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.concrete.ecommerce.api.dtos.PedidoDto;
-import com.concrete.ecommerce.api.entities.Usuario;
 import com.concrete.ecommerce.api.entities.Pedido;
-import com.concrete.ecommerce.api.enums.TipoEnum;
-import com.concrete.ecommerce.api.services.UsuarioService;
+import com.concrete.ecommerce.api.entities.Usuario;
 import com.concrete.ecommerce.api.services.PedidoService;
+import com.concrete.ecommerce.api.services.UsuarioService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,93 +34,93 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ActiveProfiles("test")
 public class PedidoControllerTest {
 
+
 	@Autowired
 	private MockMvc mvc;
 	
 	@MockBean
-	private PedidoService lancamentoService;
+	private PedidoService pedidoService;
 	
 	@MockBean
-	private UsuarioService funcionarioService;
+	private UsuarioService usuarioService;
 	
-	private static final String URL_BASE = "/api/produtos/";
-	private static final Long ID_FUNCIONARIO = 1L;
-	private static final Long ID_LANCAMENTO = 1L;
-	private static final Date DATA = new Date();
+	private static final String URL_BASE = "/api/pedidos/";
+	private static final Long ID_USUARIO = 1L;
+	private static final Long ID_PEDIDO = 1L;
+	private static final String ENDERECO_PEDIDO = "Avenida Nações Unidas, 11541";
+	private static final String DESCRICAO_PEDIDO = "Pedido de Mesas";
 	
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Test
 	@WithMockUser
 	public void testCadastrarLancamento() throws Exception {
-		Pedido lancamento = obterDadosLancamento();
-		BDDMockito.given(this.funcionarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Usuario()));
-		BDDMockito.given(this.lancamentoService.persistir(Mockito.any(Pedido.class))).willReturn(lancamento);
+		Pedido pedido = obterDadosPedido();
+		BDDMockito.given(this.usuarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Usuario()));
+		BDDMockito.given(this.pedidoService.persistir(Mockito.any(Pedido.class))).willReturn(pedido);
 
 		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
 				.content(this.obterJsonRequisicaoPost())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data.id").value(ID_LANCAMENTO))
-				.andExpect(jsonPath("$.data.tipo").value(TIPO))
-				.andExpect(jsonPath("$.data.data").value(this.dateFormat.format(DATA)))
-				.andExpect(jsonPath("$.data.funcionarioId").value(ID_FUNCIONARIO))
+				.andExpect(jsonPath("$.data.id").value(ID_PEDIDO))
+				.andExpect(jsonPath("$.data.descricao").value(DESCRICAO_PEDIDO))
+				.andExpect(jsonPath("$.data.enderecoEntrega").value(ENDERECO_PEDIDO))
+				.andExpect(jsonPath("$.data.usuarioId").value(ID_USUARIO))
 				.andExpect(jsonPath("$.errors").isEmpty());
 	}
 	
 	@Test
 	@WithMockUser
-	public void testCadastrarLancamentoFuncionarioIdInvalido() throws Exception {
-		BDDMockito.given(this.funcionarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.empty());
+	public void testCadastrarPedidoUsuarioIdInvalido() throws Exception {
+		BDDMockito.given(this.usuarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.empty());
 
 		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
 				.content(this.obterJsonRequisicaoPost())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.errors").value("Funcionário não encontrado. ID inexistente."))
+				.andExpect(jsonPath("$.errors").value("Usuário não encontrado. ID inexistente."))
 				.andExpect(jsonPath("$.data").isEmpty());
 	}
 	
 	@Test
 	@WithMockUser(username = "admin@admin.com", roles = {"ADMIN"})
-	public void testRemoverLancamento() throws Exception {
-		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Pedido()));
+	public void testRemoverPedido() throws Exception {
+		BDDMockito.given(this.pedidoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Pedido()));
 
-		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
+		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_PEDIDO)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
 	
 	@Test
 	@WithMockUser
-	public void testRemoverLancamentoAcessoNegado() throws Exception {
-		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Pedido()));
+	public void testRemoverPedidoAcessoNegado() throws Exception {
+		BDDMockito.given(this.pedidoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Pedido()));
 
-		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
+		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_PEDIDO)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isForbidden());
 	}
 
 	private String obterJsonRequisicaoPost() throws JsonProcessingException {
-		PedidoDto lancamentoDto = new PedidoDto();
-		lancamentoDto.setId(null);
-		lancamentoDto.setData(this.dateFormat.format(DATA));
-		lancamentoDto.setTipo(TIPO);
-		lancamentoDto.setFuncionarioId(ID_FUNCIONARIO);
+		PedidoDto pedidoDto = new PedidoDto();
+		pedidoDto.setId(null);
+		pedidoDto.setDescricao(DESCRICAO_PEDIDO);
+		pedidoDto.setEnderecoEntrega(ENDERECO_PEDIDO);
+		pedidoDto.setUsuarioId(ID_USUARIO);
 		ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(lancamentoDto);
+		return mapper.writeValueAsString(pedidoDto);
 	}
 
-	private Pedido obterDadosLancamento() {
-		Pedido lancamento = new Pedido();
-		lancamento.setId(ID_LANCAMENTO);
-		lancamento.setData(DATA);
-		lancamento.setTipo(TipoEnum.valueOf(TIPO));
-		lancamento.setFuncionario(new Usuario());
-		lancamento.getFuncionario().setId(ID_FUNCIONARIO);
-		return lancamento;
+	private Pedido obterDadosPedido() {
+		Pedido pedido = new Pedido();
+		pedido.setId(ID_PEDIDO);
+		pedido.setDescricao(DESCRICAO_PEDIDO);
+		pedido.setEnderecoEntrega(ENDERECO_PEDIDO);
+		pedido.getUsuario().setId(ID_USUARIO);
+		return pedido;
 	}	
 
 }

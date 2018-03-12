@@ -3,7 +3,7 @@ package com.concrete.ecommerce.api.repositories;
 import static org.junit.Assert.assertEquals;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -17,14 +17,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.concrete.ecommerce.api.entities.Empresa;
-import com.concrete.ecommerce.api.entities.Usuario;
 import com.concrete.ecommerce.api.entities.Pedido;
+import com.concrete.ecommerce.api.entities.Produto;
+import com.concrete.ecommerce.api.entities.Usuario;
 import com.concrete.ecommerce.api.enums.PerfilEnum;
-import com.concrete.ecommerce.api.enums.TipoEnum;
-import com.concrete.ecommerce.api.repositories.EmpresaRepository;
-import com.concrete.ecommerce.api.repositories.UsuarioRepository;
-import com.concrete.ecommerce.api.repositories.ProdutoRepository;
 import com.concrete.ecommerce.api.utils.PasswordUtils;
 
 @RunWith(SpringRunner.class)
@@ -33,71 +29,60 @@ import com.concrete.ecommerce.api.utils.PasswordUtils;
 public class PedidoRepositoryTest {
 	
 	@Autowired
-	private ProdutoRepository lancamentoRepository;
+	private PedidoRepository pedidoRepository;
 	
 	@Autowired
-	private UsuarioRepository funcionarioRepository;
+	private UsuarioRepository usuarioRepository;
 	
-	@Autowired
-	private EmpresaRepository empresaRepository;
-	
-	private Long funcionarioId;
+	private Long usuarioId;
 
 	@Before
 	public void setUp() throws Exception {
-		Empresa empresa = this.empresaRepository.save(obterDadosEmpresa());
-		
-		Usuario funcionario = this.funcionarioRepository.save(obterDadosFuncionario(empresa));
-		this.funcionarioId = funcionario.getId();
-		
-		this.lancamentoRepository.save(obterDadosLancamentos(funcionario));
-		this.lancamentoRepository.save(obterDadosLancamentos(funcionario));
+		Usuario usuario = this.usuarioRepository.save(obterDadosUsuario());
+		this.usuarioId = usuario.getId();
+		this.pedidoRepository.save(obterDadosPedidos(usuario));
+		this.pedidoRepository.save(obterDadosPedidos(usuario));
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		this.empresaRepository.deleteAll();
+		this.usuarioRepository.deleteAll();
 	}
 
 	@Test
-	public void testBuscarLancamentosPorFuncionarioId() {
-		List<Pedido> lancamentos = this.lancamentoRepository.findByFuncionarioId(funcionarioId);
-		
-		assertEquals(2, lancamentos.size());
+	public void testBuscarPedidosPorUsuarioId() {
+		List<Pedido> pedidos = this.pedidoRepository.findByUsuarioId(usuarioId);
+		assertEquals(2, pedidos.size());
 	}
 	
 	@Test
-	public void testBuscarLancamentosPorFuncionarioIdPaginado() {
+	public void testBuscarPedidosPorUsuarioIdPaginado() {
 		PageRequest page = new PageRequest(0, 10);
-		Page<Pedido> lancamentos = this.lancamentoRepository.findByFuncionarioId(funcionarioId, page);
-		
-		assertEquals(2, lancamentos.getTotalElements());
+		Page<Pedido> pedidos = this.pedidoRepository.findByUsuarioId(usuarioId, page);
+		assertEquals(2, pedidos.getTotalElements());
 	}
 	
-	private Pedido obterDadosLancamentos(Usuario funcionario) {
-		Pedido lancameto = new Pedido();
-		lancameto.setData(new Date());
-		lancameto.setTipo(TipoEnum.INICIO_ALMOCO);
-		lancameto.setFuncionario(funcionario);
-		return lancameto;
+	private Pedido obterDadosPedidos(Usuario usuario) {
+		Pedido pedido = new Pedido();
+		pedido.setDescricao("Novo Pedido");
+		pedido.setEnderecoEntrega("Avenida Nações Unidas, 11541");
+		List<Produto> produtos = new ArrayList<>();
+		Produto produto = new Produto();
+		produto.setValor(15.80);
+		produtos.add(produto);
+		pedido.setProdutos(produtos);
+		pedido.setUsuario(usuario);
+		return pedido;
 	}
 
-	private Usuario obterDadosFuncionario(Empresa empresa) throws NoSuchAlgorithmException {
+	private Usuario obterDadosUsuario() throws NoSuchAlgorithmException {
 		Usuario funcionario = new Usuario();
 		funcionario.setNome("Fulano de Tal");
 		funcionario.setPerfil(PerfilEnum.ROLE_USUARIO);
 		funcionario.setSenha(PasswordUtils.gerarBCrypt("123456"));
-		funcionario.setCpf("24291173474");
 		funcionario.setEmail("email@email.com");
-		funcionario.setEmpresa(empresa);
 		return funcionario;
 	}
 
-	private Empresa obterDadosEmpresa() {
-		Empresa empresa = new Empresa();
-		empresa.setRazaoSocial("Empresa de exemplo");
-		empresa.setCnpj("51463645000100");
-		return empresa;
-	}
 
 }
