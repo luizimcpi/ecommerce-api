@@ -7,42 +7,35 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.concrete.ecommerce.api.entities.Pedido;
+import com.concrete.ecommerce.api.entities.Produto;
 import com.concrete.ecommerce.api.repositories.ProdutoRepository;
-import com.concrete.ecommerce.api.services.PedidoService;
+import com.concrete.ecommerce.api.services.ProdutoService;
 
 @Service
-public class ProdutoServiceImpl implements PedidoService {
+public class ProdutoServiceImpl implements ProdutoService {
 
 	private static final Logger log = LoggerFactory.getLogger(ProdutoServiceImpl.class);
 
 	@Autowired
-	private ProdutoRepository lancamentoRepository;
-
-	public Page<Pedido> buscarPorFuncionarioId(Long funcionarioId, PageRequest pageRequest) {
-		log.info("Buscando lançamentos para o funcionário ID {}", funcionarioId);
-		return this.lancamentoRepository.findByFuncionarioId(funcionarioId, pageRequest);
+	private ProdutoRepository produtoRepository;
+	
+	@Cacheable("produtoPorId")
+	public Optional<Produto> buscarPorId(Long id) {
+		log.info("Buscando um produto pelo ID {}", id);
+		return Optional.ofNullable(this.produtoRepository.findOne(id));
 	}
 	
-	@Cacheable("lancamentoPorId")
-	public Optional<Pedido> buscarPorId(Long id) {
-		log.info("Buscando um lançamento pelo ID {}", id);
-		return Optional.ofNullable(this.lancamentoRepository.findOne(id));
-	}
-	
-	@CachePut("lancamentoPorId")
-	public Pedido persistir(Pedido lancamento) {
-		log.info("Persistindo o lançamento: {}", lancamento);
-		return this.lancamentoRepository.save(lancamento);
+	@CachePut("produtoPorId")
+	public Produto persistir(Produto produto) {
+		log.info("Persistindo o produto: {}", produto);
+		return this.produtoRepository.save(produto);
 	}
 	
 	public void remover(Long id) {
-		log.info("Removendo o lançamento ID {}", id);
-		this.lancamentoRepository.delete(id);
+		log.info("Removendo o produto ID {}", id);
+		this.produtoRepository.delete(id);
 	}
 
 }

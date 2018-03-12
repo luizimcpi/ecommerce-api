@@ -46,7 +46,7 @@ public class PedidoControllerTest {
 	@MockBean
 	private UsuarioService funcionarioService;
 	
-	private static final String URL_BASE = "/api/lancamentos/";
+	private static final String URL_BASE = "/api/produtos/";
 	private static final Long ID_FUNCIONARIO = 1L;
 	private static final Long ID_LANCAMENTO = 1L;
 	private static final Date DATA = new Date();

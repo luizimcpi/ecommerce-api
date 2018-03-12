@@ -3,8 +3,6 @@ package com.concrete.ecommerce.api.controllers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -22,12 +20,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.concrete.ecommerce.api.dtos.PedidoDto;
-import com.concrete.ecommerce.api.entities.Usuario;
-import com.concrete.ecommerce.api.entities.Pedido;
-import com.concrete.ecommerce.api.enums.TipoEnum;
-import com.concrete.ecommerce.api.services.UsuarioService;
-import com.concrete.ecommerce.api.services.PedidoService;
+import com.concrete.ecommerce.api.dtos.ProdutoDto;
+import com.concrete.ecommerce.api.entities.Produto;
+import com.concrete.ecommerce.api.services.ProdutoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,62 +32,44 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ActiveProfiles("test")
 public class ProdutoControllerTest {
 
+
+
 	@Autowired
 	private MockMvc mvc;
 	
 	@MockBean
-	private PedidoService lancamentoService;
+	private ProdutoService produtoService;
 	
-	@MockBean
-	private UsuarioService funcionarioService;
+	private static final String URL_BASE = "/api/produtos/";
+	private static final Long ID_PRODUTO = 1L;
+	private static final String DESCRICAO = "fake product";
+	private static final double VALOR_PRODUTO = 5.60;
 	
-	private static final String URL_BASE = "/api/lancamentos/";
-	private static final Long ID_FUNCIONARIO = 1L;
-	private static final Long ID_LANCAMENTO = 1L;
-	private static final String TIPO = TipoEnum.INICIO_TRABALHO.name();
-	private static final Date DATA = new Date();
-	
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Test
 	@WithMockUser
-	public void testCadastrarLancamento() throws Exception {
-		Pedido lancamento = obterDadosLancamento();
-		BDDMockito.given(this.funcionarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Usuario()));
-		BDDMockito.given(this.lancamentoService.persistir(Mockito.any(Pedido.class))).willReturn(lancamento);
+	public void testCadastrarProduto() throws Exception {
+		Produto produto = obterDadosProduto();
+		BDDMockito.given(this.produtoService.persistir(Mockito.any(Produto.class))).willReturn(produto);
 
 		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
 				.content(this.obterJsonRequisicaoPost())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data.id").value(ID_LANCAMENTO))
-				.andExpect(jsonPath("$.data.tipo").value(TIPO))
-				.andExpect(jsonPath("$.data.data").value(this.dateFormat.format(DATA)))
-				.andExpect(jsonPath("$.data.funcionarioId").value(ID_FUNCIONARIO))
+				.andExpect(jsonPath("$.data.id").value(ID_PRODUTO))
+				.andExpect(jsonPath("$.data.decricao").value(DESCRICAO))
+				.andExpect(jsonPath("$.data.valor").value(VALOR_PRODUTO))
 				.andExpect(jsonPath("$.errors").isEmpty());
 	}
-	
-	@Test
-	@WithMockUser
-	public void testCadastrarLancamentoFuncionarioIdInvalido() throws Exception {
-		BDDMockito.given(this.funcionarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.empty());
 
-		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
-				.content(this.obterJsonRequisicaoPost())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.errors").value("Funcionário não encontrado. ID inexistente."))
-				.andExpect(jsonPath("$.data").isEmpty());
-	}
 	
 	@Test
 	@WithMockUser(username = "admin@admin.com", roles = {"ADMIN"})
-	public void testRemoverLancamento() throws Exception {
-		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Pedido()));
+	public void testRemoverProduto() throws Exception {
+		BDDMockito.given(this.produtoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Produto()));
 
-		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
+		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_PRODUTO)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
@@ -100,31 +77,28 @@ public class ProdutoControllerTest {
 	@Test
 	@WithMockUser
 	public void testRemoverLancamentoAcessoNegado() throws Exception {
-		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Pedido()));
+		BDDMockito.given(this.produtoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Produto()));
 
-		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
+		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_PRODUTO)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isForbidden());
 	}
 
 	private String obterJsonRequisicaoPost() throws JsonProcessingException {
-		PedidoDto lancamentoDto = new PedidoDto();
-		lancamentoDto.setId(null);
-		lancamentoDto.setData(this.dateFormat.format(DATA));
-		lancamentoDto.setTipo(TIPO);
-		lancamentoDto.setFuncionarioId(ID_FUNCIONARIO);
+		ProdutoDto produtoDto = new ProdutoDto();
+		produtoDto.setId(null);
+		produtoDto.setDescricao(DESCRICAO);
+		produtoDto.setValor(VALOR_PRODUTO);
 		ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(lancamentoDto);
+		return mapper.writeValueAsString(produtoDto);
 	}
 
-	private Pedido obterDadosLancamento() {
-		Pedido lancamento = new Pedido();
-		lancamento.setId(ID_LANCAMENTO);
-		lancamento.setData(DATA);
-		lancamento.setTipo(TipoEnum.valueOf(TIPO));
-		lancamento.setFuncionario(new Usuario());
-		lancamento.getFuncionario().setId(ID_FUNCIONARIO);
-		return lancamento;
+	private Produto obterDadosProduto() {
+		Produto produto = new Produto();
+		produto.setId(ID_PRODUTO);
+		produto.setDescricao(DESCRICAO);
+		produto.setValor(VALOR_PRODUTO);
+		return produto;
 	}	
 
 }

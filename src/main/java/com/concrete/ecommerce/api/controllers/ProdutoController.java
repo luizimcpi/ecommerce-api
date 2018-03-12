@@ -1,19 +1,14 @@
 package com.concrete.ecommerce.api.controllers;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -26,28 +21,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.concrete.ecommerce.api.dtos.PedidoDto;
-import com.concrete.ecommerce.api.entities.Pedido;
-import com.concrete.ecommerce.api.entities.Usuario;
+import com.concrete.ecommerce.api.dtos.ProdutoDto;
+import com.concrete.ecommerce.api.entities.Produto;
 import com.concrete.ecommerce.api.response.Response;
-import com.concrete.ecommerce.api.services.PedidoService;
-import com.concrete.ecommerce.api.services.UsuarioService;
+import com.concrete.ecommerce.api.services.ProdutoService;
 
 @RestController
 @RequestMapping("/api/produtos")
 @CrossOrigin(origins = "*")
 public class ProdutoController {
 	private static final Logger log = LoggerFactory.getLogger(PedidoController.class);
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Autowired
-	private PedidoService lancamentoService;
-
-	@Autowired
-	private UsuarioService funcionarioService;
+	private ProdutoService produtoService;
 
 	@Value("${paginacao.qtd_por_pagina}")
 	private int qtdPorPagina;
@@ -55,198 +43,143 @@ public class ProdutoController {
 	public ProdutoController() {
 	}
 
-	/**
-	 * Retorna a listagem de lançamentos de um funcionário.
-	 * 
-	 * @param funcionarioId
-	 * @return ResponseEntity<Response<LancamentoDto>>
-	 */
-	@GetMapping(value = "/funcionario/{funcionarioId}")
-	public ResponseEntity<Response<Page<PedidoDto>>> listarPorFuncionarioId(
-			@PathVariable("funcionarioId") Long funcionarioId, @RequestParam(value = "pag", defaultValue = "0") int pag,
-			@RequestParam(value = "ord", defaultValue = "id") String ord,
-			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
-		log.info("Buscando lançamentos por ID do funcionário: {}, página: {}", funcionarioId, pag);
-		Response<Page<PedidoDto>> response = new Response<Page<PedidoDto>>();
-
-		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina, Direction.valueOf(dir), ord);
-		Page<Pedido> lancamentos = this.lancamentoService.buscarPorFuncionarioId(funcionarioId, pageRequest);
-		Page<PedidoDto> lancamentosDto = lancamentos.map(lancamento -> this.converterLancamentoDto(lancamento));
-
-		response.setData(lancamentosDto);
-		return ResponseEntity.ok(response);
-	}
 
 	/**
-	 * Retorna um lançamento por ID.
+	 * Retorna um produto por ID.
 	 * 
 	 * @param id
-	 * @return ResponseEntity<Response<LancamentoDto>>
+	 * @return ResponseEntity<Response<ProdutoDto>>
 	 */
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Response<PedidoDto>> listarPorId(@PathVariable("id") Long id) {
+	public ResponseEntity<Response<ProdutoDto>> listarPorId(@PathVariable("id") Long id) {
 		log.info("Buscando lançamento por ID: {}", id);
-		Response<PedidoDto> response = new Response<PedidoDto>();
-		Optional<Pedido> lancamento = this.lancamentoService.buscarPorId(id);
+		Response<ProdutoDto> response = new Response<ProdutoDto>();
+		Optional<Produto> produto = this.produtoService.buscarPorId(id);
 
-		if (!lancamento.isPresent()) {
-			log.info("Lançamento não encontrado para o ID: {}", id);
-			response.getErrors().add("Lançamento não encontrado para o id " + id);
+		if (!produto.isPresent()) {
+			log.info("Produto não encontrado para o ID: {}", id);
+			response.getErrors().add("Produto não encontrado para o id " + id);
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		response.setData(this.converterLancamentoDto(lancamento.get()));
+		response.setData(this.converterProdutoDto(produto.get()));
 		return ResponseEntity.ok(response);
 	}
 
 	/**
-	 * Adiciona um novo lançamento.
+	 * Adiciona um novo produto.
 	 * 
-	 * @param lancamento
+	 * @param produto
 	 * @param result
-	 * @return ResponseEntity<Response<LancamentoDto>>
+	 * @return ResponseEntity<Response<ProdutoDto>>
 	 * @throws ParseException
 	 */
 	@PostMapping
-	public ResponseEntity<Response<PedidoDto>> adicionar(@Valid @RequestBody PedidoDto lancamentoDto,
+	public ResponseEntity<Response<ProdutoDto>> adicionar(@Valid @RequestBody ProdutoDto produtoDto,
 			BindingResult result) throws ParseException {
-		log.info("Adicionando lançamento: {}", lancamentoDto.toString());
-		Response<PedidoDto> response = new Response<PedidoDto>();
-		validarFuncionario(lancamentoDto, result);
-		Pedido lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
+		log.info("Adicionando lançamento: {}", produtoDto.toString());
+		Response<ProdutoDto> response = new Response<ProdutoDto>();
+		Produto produto = this.converterDtoParaProduto(produtoDto, result);
 
 		if (result.hasErrors()) {
-			log.error("Erro validando lançamento: {}", result.getAllErrors());
+			log.error("Erro validando produto: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		lancamento = this.lancamentoService.persistir(lancamento);
-		response.setData(this.converterLancamentoDto(lancamento));
+		produto = this.produtoService.persistir(produto);
+		response.setData(this.converterProdutoDto(produto));
 		return ResponseEntity.ok(response);
 	}
 
 	/**
-	 * Atualiza os dados de um lançamento.
+	 * Atualiza os dados de um produto.
 	 * 
 	 * @param id
-	 * @param lancamentoDto
-	 * @return ResponseEntity<Response<Lancamento>>
+	 * @param produtoDto
+	 * @return ResponseEntity<Response<Produto>>
 	 * @throws ParseException
 	 */
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Response<PedidoDto>> atualizar(@PathVariable("id") Long id,
-			@Valid @RequestBody PedidoDto lancamentoDto, BindingResult result) throws ParseException {
-		log.info("Atualizando lançamento: {}", lancamentoDto.toString());
-		Response<PedidoDto> response = new Response<PedidoDto>();
-		validarFuncionario(lancamentoDto, result);
-		lancamentoDto.setId(Optional.of(id));
-		Pedido lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
+	public ResponseEntity<Response<ProdutoDto>> atualizar(@PathVariable("id") Long id,
+			@Valid @RequestBody ProdutoDto produtoDto, BindingResult result) throws ParseException {
+		log.info("Atualizando produto: {}", produtoDto.toString());
+		Response<ProdutoDto> response = new Response<ProdutoDto>();
+		produtoDto.setId(Optional.of(id));
+		Produto produto = this.converterDtoParaProduto(produtoDto, result);
 
 		if (result.hasErrors()) {
-			log.error("Erro validando lançamento: {}", result.getAllErrors());
+			log.error("Erro validando produto: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		lancamento = this.lancamentoService.persistir(lancamento);
-		response.setData(this.converterLancamentoDto(lancamento));
+		produto = this.produtoService.persistir(produto);
+		response.setData(this.converterProdutoDto(produto));
 		return ResponseEntity.ok(response);
 	}
 
 	/**
-	 * Remove um lançamento por ID.
+	 * Remove um produto por ID.
 	 * 
 	 * @param id
-	 * @return ResponseEntity<Response<Lancamento>>
+	 * @return ResponseEntity<Response<Produto>>
 	 */
 	@DeleteMapping(value = "/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id) {
-		log.info("Removendo lançamento: {}", id);
+		log.info("Removendo produto: {}", id);
 		Response<String> response = new Response<String>();
-		Optional<Pedido> lancamento = this.lancamentoService.buscarPorId(id);
+		Optional<Produto> produto = this.produtoService.buscarPorId(id);
 
-		if (!lancamento.isPresent()) {
-			log.info("Erro ao remover devido ao lançamento ID: {} ser inválido.", id);
-			response.getErrors().add("Erro ao remover lançamento. Registro não encontrado para o id " + id);
+		if (!produto.isPresent()) {
+			log.info("Erro ao remover devido ao produto ID: {} ser inválido.", id);
+			response.getErrors().add("Erro ao remover produto. Registro não encontrado para o id " + id);
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		this.lancamentoService.remover(id);
+		this.produtoService.remover(id);
 		return ResponseEntity.ok(new Response<String>());
 	}
 
 	/**
-	 * Valida um funcionário, verificando se ele é existente e válido no sistema.
+	 * Converte uma entidade produto para seu respectivo DTO.
 	 * 
-	 * @param lancamentoDto
-	 * @param result
+	 * @param produto
+	 * @return ProdutoDto
 	 */
-	private void validarFuncionario(PedidoDto lancamentoDto, BindingResult result) {
-		if (lancamentoDto.getFuncionarioId() == null) {
-			result.addError(new ObjectError("funcionario", "Funcionário não informado."));
-			return;
-		}
+	private ProdutoDto converterProdutoDto(Produto produto) {
+		ProdutoDto produtoDto = new ProdutoDto();
+		produtoDto.setId(Optional.of(produto.getId()));
+		produtoDto.setDescricao(produto.getDescricao());
+		produtoDto.setValor(produto.getValor());
 
-		log.info("Validando funcionário id {}: ", lancamentoDto.getFuncionarioId());
-		Optional<Usuario> funcionario = this.funcionarioService.buscarPorId(lancamentoDto.getFuncionarioId());
-		if (!funcionario.isPresent()) {
-			result.addError(new ObjectError("funcionario", "Funcionário não encontrado. ID inexistente."));
-		}
+		return produtoDto;
 	}
 
 	/**
-	 * Converte uma entidade lançamento para seu respectivo DTO.
+	 * Converte um ProdutoDto para uma entidade Produto.
 	 * 
-	 * @param lancamento
-	 * @return LancamentoDto
-	 */
-	private PedidoDto converterLancamentoDto(Pedido lancamento) {
-		PedidoDto lancamentoDto = new PedidoDto();
-		lancamentoDto.setId(Optional.of(lancamento.getId()));
-		lancamentoDto.setData(this.dateFormat.format(lancamento.getData()));
-		lancamentoDto.setTipo(lancamento.getTipo().toString());
-		lancamentoDto.setDescricao(lancamento.getDescricao());
-		lancamentoDto.setLocalizacao(lancamento.getLocalizacao());
-		lancamentoDto.setFuncionarioId(lancamento.getFuncionario().getId());
-
-		return lancamentoDto;
-	}
-
-	/**
-	 * Converte um LancamentoDto para uma entidade Lancamento.
-	 * 
-	 * @param lancamentoDto
+	 * @param produtoDto
 	 * @param result
-	 * @return Lancamento
+	 * @return Produto
 	 * @throws ParseException
 	 */
-	private Pedido converterDtoParaLancamento(PedidoDto lancamentoDto, BindingResult result) throws ParseException {
-		Pedido lancamento = new Pedido();
+	private Produto converterDtoParaProduto(ProdutoDto produtoDto, BindingResult result) throws ParseException {
+		Produto produto = new Produto();
 
-		if (lancamentoDto.getId().isPresent()) {
-			Optional<Pedido> lanc = this.lancamentoService.buscarPorId(lancamentoDto.getId().get());
-			if (lanc.isPresent()) {
-				lancamento = lanc.get();
+		if (produtoDto.getId().isPresent()) {
+			Optional<Produto> prod = this.produtoService.buscarPorId(produtoDto.getId().get());
+			if (prod.isPresent()) {
+				produto = prod.get();
 			} else {
-				result.addError(new ObjectError("lancamento", "Lançamento não encontrado."));
+				result.addError(new ObjectError("produto", "Produto não encontrado."));
 			}
-		} else {
-			lancamento.setFuncionario(new Usuario());
-			lancamento.getFuncionario().setId(lancamentoDto.getFuncionarioId());
-		}
+		} 
 
-		lancamento.setDescricao(lancamentoDto.getDescricao());
-		lancamento.setLocalizacao(lancamentoDto.getLocalizacao());
-		lancamento.setData(this.dateFormat.parse(lancamentoDto.getData()));
+		produto.setDescricao(produtoDto.getDescricao());
+		produto.setValor(produtoDto.getValor());
 
-		if (EnumUtils.isValidEnum(TipoEnum.class, lancamentoDto.getTipo())) {
-			lancamento.setTipo(TipoEnum.valueOf(lancamentoDto.getTipo()));
-		} else {
-			result.addError(new ObjectError("tipo", "Tipo inválido."));
-		}
-
-		return lancamento;
+		return produto;
 	}
 }

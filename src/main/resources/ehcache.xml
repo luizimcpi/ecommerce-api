@@ -1,6 +1,10 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="ehcache.xsd">
-	<cache name="lancamentoPorId" 
+	<cache name="pedidoPorId" 
+		maxEntriesLocalHeap="200"
+		timeToLiveSeconds="3600">
+	</cache>
+	<cache name="produtoPorId" 
 		maxEntriesLocalHeap="200"
 		timeToLiveSeconds="3600">
 	</cache>
