@@ -3,7 +3,7 @@ E-commerce API utilizando Spring Boot e JWT
 
 Build Status
 
-[![Build Status](https://travis-ci.org/luizimcpi/ecommerce-api.svg?branch=master)]
+[![Build Status](https://travis-ci.org/luizimcpi/ecommerce-api.svg?branch=master)](https://travis-ci.org/luizimcpi/ecommerce-api)
 
 Configurações de DB
 ```
