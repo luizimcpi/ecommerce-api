@@ -232,9 +232,14 @@ public class PedidoController {
 			pedido.setUsuario(new Usuario());
 			pedido.getUsuario().setId(pedidoDto.getUsuarioId());
 		}
+		
+		if(pedidoDto.getProdutos() == null || pedidoDto.getProdutos().isEmpty()) {
+			result.addError(new ObjectError("pedido", "Lista de Produtos não pode estar vazia."));
+		}
 
 		pedido.setDescricao(pedidoDto.getDescricao());
 		pedido.setEnderecoEntrega(pedidoDto.getEnderecoEntrega());
+		pedido.setProdutos(pedidoDto.getProdutos());
 
 		return pedido;
 	}

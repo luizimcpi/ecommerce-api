@@ -1,6 +1,9 @@
 package com.concrete.ecommerce.api.dtos;
 
+import java.util.List;
 import java.util.Optional;
+
+import com.concrete.ecommerce.api.entities.Produto;
 
 public class PedidoDto {
 
@@ -8,6 +11,7 @@ public class PedidoDto {
 	private String descricao;
 	private String enderecoEntrega;
 	private Long usuarioId;
+	private List<Produto> produtos;
 
 	public PedidoDto() {
 	}
@@ -44,10 +48,18 @@ public class PedidoDto {
 		this.usuarioId = usuarioId;
 	}
 
+	public List<Produto> getProdutos() {
+		return produtos;
+	}
+
+	public void setProdutos(List<Produto> produtos) {
+		this.produtos = produtos;
+	}
+
 	@Override
 	public String toString() {
 		return "PedidoDto [id=" + id + ", descricao=" + descricao + ", enderecoEntrega=" + enderecoEntrega
-				+ ", usuarioId=" + usuarioId + "]";
+				+ ", usuarioId=" + usuarioId + ", produtos=" + produtos + "]";
 	}
 
 }

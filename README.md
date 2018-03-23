@@ -44,7 +44,6 @@ Cadastrar um Produto
 ```
 URL - > http://localhost:8080/api/produtos
 Method -> POST
-Content-Type -> application/json
 Body
 {
 	"descricao": "Televisor",
@@ -63,6 +62,27 @@ Authorization -> Bearer + token gerado no auth
 Content-Type -> application/json
 ```
 
+Cadastrar um Pedido
+```
+URL - > http://localhost:8080/api/pedidos
+Method -> POST
+Body
+{
+	"descricao": "Pedido Teste",
+	"enderecoEntrega": "Rua das acacias, 90",
+	"usuarioId": 1,
+	"produtos": [
+		{
+			"id": 12,
+			"descricao": "Aparelho de BluRay Sony",
+			"valor": "29.95"
+		}
+	]
+}
+Headers
+Authorization -> Bearer + token gerado no auth
+Content-Type -> application/json
+```
 Swagger
 ```
 http://localhost:8080/swagger-ui.html
