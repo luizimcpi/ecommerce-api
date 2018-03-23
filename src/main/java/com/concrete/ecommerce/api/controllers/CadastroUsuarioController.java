@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +24,6 @@ import com.concrete.ecommerce.api.utils.PasswordUtils;
 
 @RestController
 @RequestMapping("/api/cadastrar-usuario")
-@CrossOrigin(origins = "*")
 public class CadastroUsuarioController {
 
 	private static final Logger log = LoggerFactory.getLogger(CadastroUsuarioController.class);
