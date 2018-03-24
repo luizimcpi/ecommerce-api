@@ -40,9 +40,8 @@ public class UsuarioRepositoryTest {
 	}
 
 	@Test
-	public void testBuscarFuncionarioPorId() {
+	public void testBuscarUsuarioPorId() {
 		Usuario usuario = this.usuarioRepository.findOne(ID);
-
 		assertEquals(EMAIL, usuario.getEmail());
 	}
 
