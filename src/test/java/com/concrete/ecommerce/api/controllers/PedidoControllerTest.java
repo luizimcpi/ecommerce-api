@@ -3,8 +3,11 @@ package com.concrete.ecommerce.api.controllers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import com.concrete.ecommerce.api.entities.Produto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
@@ -110,6 +113,12 @@ public class PedidoControllerTest {
 		pedidoDto.setDescricao(DESCRICAO_PEDIDO);
 		pedidoDto.setEnderecoEntrega(ENDERECO_PEDIDO);
 		pedidoDto.setUsuarioId(ID_USUARIO);
+		List<Produto> produtos = new ArrayList<>();
+		Produto produto = new Produto();
+		produto.setDescricao("Produto Teste");
+		produto.setValor(2.57);
+		produtos.add(produto);
+		pedidoDto.setProdutos(produtos);
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(pedidoDto);
 	}
