@@ -222,6 +222,7 @@ public class PedidoController {
 		for (UsuarioPedidoProdutos usuarioPedidoProdutos : listaIdProdutos) {
 			Optional<Produto> produto = produtoService.buscarPorId(usuarioPedidoProdutos.getProdutoId());
 			if(produto.isPresent()) {
+				pedidoDto.setValorTotal(pedidoDto.getValorTotal() + produto.get().getValor());
 				produtos.add(produto.get());
 			}
 		}
