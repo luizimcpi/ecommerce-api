@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.concrete.ecommerce.api.dtos.PedidoDto;
 import com.concrete.ecommerce.api.entities.Pedido;
 import com.concrete.ecommerce.api.repositories.PedidoRepository;
 
@@ -57,7 +58,7 @@ public class PedidoServiceTest {
 
 	@Test
 	public void testPersistirLancamento() {
-		Pedido pedido = this.pedidoService.persistir(new Pedido());
+		Pedido pedido = this.pedidoService.persistir(new PedidoDto(), new Pedido());
 		assertNotNull(pedido);
 	}
 

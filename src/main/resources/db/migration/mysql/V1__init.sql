@@ -21,8 +21,14 @@ CREATE TABLE `produto` (
   `data_atualizacao` datetime NOT NULL,
   `data_criacao` datetime NOT NULL,
   `descricao` varchar(255) DEFAULT NULL,
-  `valor_produto` double DEFAULT NULL,
-  `pedido_id` bigint(20) DEFAULT NULL
+  `valor_produto` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `usuario_pedido_produtos` (
+  `id` bigint(20) NOT NULL,
+  `pedido_id` bigint(20) NOT NULL,
+  `usuario_id` bigint(20) NOT NULL,
+  `produto_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
 -- Indexes for table `empresa`
@@ -41,8 +47,13 @@ ALTER TABLE `pedido`
 -- Indexes for table `produto`
 --
 ALTER TABLE `produto`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `FK46i4k5vl8wah7feutye9kbpi4` (`pedido_id`);
+  ADD PRIMARY KEY (`id`);
+  
+--
+-- Indexes for table `produto`
+--
+ALTER TABLE `usuario_pedido_produtos`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for table `usuario`
@@ -59,9 +70,11 @@ ALTER TABLE `pedido`
 --
 ALTER TABLE `produto`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  --
+-- AUTO_INCREMENT for table `pedido_produtos`
 --
--- Constraints for dumped tables
---
+ALTER TABLE `usuario_pedido_produtos`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for table `pedido`
@@ -69,8 +82,3 @@ ALTER TABLE `produto`
 ALTER TABLE `pedido`
   ADD CONSTRAINT `FK4cm1kg523jlopyexjbmi6y54j` FOREIGN KEY (`usuario_id`) REFERENCES `pedido` (`id`);
 
---
--- Constraints for table `produto`
---
-ALTER TABLE `produto`
-  ADD CONSTRAINT `FK46i4k5vl8wah7feutye9kbpi4` FOREIGN KEY (`pedido_id`) REFERENCES `produto` (`id`);

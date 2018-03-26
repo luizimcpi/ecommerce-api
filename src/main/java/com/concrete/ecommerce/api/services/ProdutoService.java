@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import com.concrete.ecommerce.api.entities.Pedido;
 import com.concrete.ecommerce.api.entities.Produto;
 
 public interface ProdutoService {

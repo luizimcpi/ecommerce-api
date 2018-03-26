@@ -59,7 +59,7 @@ public class PedidoControllerTest {
 	public void testCadastrarPedido() throws Exception {
 		Pedido pedido = obterDadosPedido();
 		BDDMockito.given(this.usuarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Usuario()));
-		BDDMockito.given(this.pedidoService.persistir(Mockito.any(Pedido.class))).willReturn(pedido);
+		BDDMockito.given(this.pedidoService.persistir(Mockito.any(PedidoDto.class), Mockito.any(Pedido.class))).willReturn(pedido);
 
 		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
 				.content(this.obterJsonRequisicaoPost())

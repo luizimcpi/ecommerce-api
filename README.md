@@ -73,9 +73,14 @@ Body
 	"usuarioId": 1,
 	"produtos": [
 		{
-			"id": 12,
-			"descricao": "Aparelho de BluRay Sony",
-			"valor": "29.95"
+			"id": 1,
+        	"descricao": "Console Playstation 4",
+        	"valor": 1500
+		},
+		{
+			"id": 2,
+        	"descricao": "Televisao 4K Semp Toshiba",
+        	"valor": 2550.59
 		}
 	]
 }

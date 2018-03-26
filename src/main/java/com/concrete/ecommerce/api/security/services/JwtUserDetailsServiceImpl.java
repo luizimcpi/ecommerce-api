@@ -16,14 +16,14 @@ import com.concrete.ecommerce.api.services.UsuarioService;
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
-	private UsuarioService funcionarioService;
+	private UsuarioService usuarioService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Usuario> funcionario = funcionarioService.buscarPorEmail(username);
+		Optional<Usuario> usuario = usuarioService.buscarPorEmail(username);
 
-		if (funcionario.isPresent()) {
-			return JwtUserFactory.create(funcionario.get());
+		if (usuario.isPresent()) {
+			return JwtUserFactory.create(usuario.get());
 		}
 
 		throw new UsernameNotFoundException("Email não encontrado.");

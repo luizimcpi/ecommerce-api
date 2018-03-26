@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import com.concrete.ecommerce.api.dtos.PedidoDto;
 import com.concrete.ecommerce.api.entities.Pedido;
 
 public interface PedidoService {
@@ -32,7 +33,7 @@ public interface PedidoService {
 	 * @param pedido
 	 * @return Pedido
 	 */
-	Pedido persistir(Pedido pedido);
+	Pedido persistir(PedidoDto pedidoDto, Pedido pedido);
 	
 	/**
 	 * Remove um pedido da base de dados.

@@ -5,11 +5,9 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -25,7 +23,6 @@ public class Produto implements Serializable {
 	private double valor;
 	private Date dataCriacao;
 	private Date dataAtualizacao;
-	private Pedido pedido;
 
 	public Produto() {
 	}
@@ -76,15 +73,6 @@ public class Produto implements Serializable {
 		this.dataAtualizacao = dataAtualizacao;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	public Pedido getPedido() {
-		return pedido;
-	}
-
-	public void setPedido(Pedido pedido) {
-		this.pedido = pedido;
-	}
-
 	@PreUpdate
 	public void preUpdate() {
 		dataAtualizacao = new Date();
@@ -100,7 +88,7 @@ public class Produto implements Serializable {
 	@Override
 	public String toString() {
 		return "Produto [id=" + id + ", descricao=" + descricao + ", valor=" + valor + ", dataCriacao=" + dataCriacao
-				+ ", dataAtualizacao=" + dataAtualizacao + ", pedido=" + pedido + "]";
+				+ ", dataAtualizacao=" + dataAtualizacao + "]";
 	}
 
 }

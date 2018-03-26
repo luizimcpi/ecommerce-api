@@ -41,7 +41,7 @@ public class PedidoController {
 
 	@Autowired
 	private PedidoService pedidoService;
-
+	
 	@Autowired
 	private UsuarioService usuarioService;
 
@@ -68,7 +68,7 @@ public class PedidoController {
 		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina, Direction.valueOf(dir), ord);
 		Page<Pedido> pedidos = this.pedidoService.buscarPorUsuarioId(usuarioId, pageRequest);
 		Page<PedidoDto> pedidosDto = pedidos.map(pedido -> this.converterPedidoDto(pedido));
-
+		
 		response.setData(pedidosDto);
 		return ResponseEntity.ok(response);
 	}
@@ -116,8 +116,7 @@ public class PedidoController {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
-
-		pedido = this.pedidoService.persistir(pedido);
+		pedido = this.pedidoService.persistir(pedidoDto, pedido);
 		response.setData(this.converterPedidoDto(pedido));
 		return ResponseEntity.ok(response);
 	}
@@ -144,11 +143,12 @@ public class PedidoController {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
-
-		pedido = this.pedidoService.persistir(pedido);
+		pedido = this.pedidoService.persistir(pedidoDto, pedido);
+		
 		response.setData(this.converterPedidoDto(pedido));
 		return ResponseEntity.ok(response);
 	}
+
 
 	/**
 	 * Remove um pedido por ID.
@@ -239,8 +239,7 @@ public class PedidoController {
 
 		pedido.setDescricao(pedidoDto.getDescricao());
 		pedido.setEnderecoEntrega(pedidoDto.getEnderecoEntrega());
-		pedido.setProdutos(pedidoDto.getProdutos());
-
+		
 		return pedido;
 	}
 

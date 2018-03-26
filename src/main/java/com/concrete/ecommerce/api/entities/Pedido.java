@@ -2,9 +2,7 @@ package com.concrete.ecommerce.api.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
@@ -27,7 +24,6 @@ public class Pedido implements Serializable {
 	private String enderecoEntrega;
 	private Date dataCriacao;
 	private Usuario usuario;
-	private List<Produto> produtos;
 
 	public Pedido() {
 	}
@@ -60,15 +56,6 @@ public class Pedido implements Serializable {
 		this.dataCriacao = dataCriacao;
 	}
 
-	@OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	public List<Produto> getProdutos() {
-		return produtos;
-	}
-
-	public void setProdutos(List<Produto> produtos) {
-		this.produtos = produtos;
-	}
-
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Usuario getUsuario() {
 		return usuario;
@@ -92,10 +79,11 @@ public class Pedido implements Serializable {
 		final Date atual = new Date();
 		dataCriacao = atual;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Pedido [id=" + id + ", descricao=" + descricao + ", enderecoEntrega=" + enderecoEntrega
-				+ ", dataCriacao=" + dataCriacao + ", usuario=" + usuario + ", produtos=" + produtos + "]";
+				+ ", dataCriacao=" + dataCriacao + ", usuario=" + usuario + "]";
 	}
+
 }
