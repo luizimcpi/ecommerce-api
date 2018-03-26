@@ -1,6 +1,8 @@
 package com.concrete.ecommerce.api.controllers;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -28,9 +30,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.concrete.ecommerce.api.dtos.PedidoDto;
 import com.concrete.ecommerce.api.entities.Pedido;
+import com.concrete.ecommerce.api.entities.Produto;
 import com.concrete.ecommerce.api.entities.Usuario;
+import com.concrete.ecommerce.api.entities.UsuarioPedidoProdutos;
 import com.concrete.ecommerce.api.response.Response;
 import com.concrete.ecommerce.api.services.PedidoService;
+import com.concrete.ecommerce.api.services.ProdutoService;
+import com.concrete.ecommerce.api.services.UsuarioPedidoProdutosService;
 import com.concrete.ecommerce.api.services.UsuarioService;
 
 @RestController
@@ -41,6 +47,12 @@ public class PedidoController {
 
 	@Autowired
 	private PedidoService pedidoService;
+	
+	@Autowired
+	private UsuarioPedidoProdutosService usuarioPedidoProdutosService;
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@Autowired
 	private UsuarioService usuarioService;
@@ -205,7 +217,16 @@ public class PedidoController {
 		pedidoDto.setDescricao(pedido.getDescricao());
 		pedidoDto.setEnderecoEntrega(pedido.getEnderecoEntrega());
 		pedidoDto.setUsuarioId(pedido.getUsuario().getId());
-
+		List<UsuarioPedidoProdutos> listaIdProdutos = usuarioPedidoProdutosService.buscarPorUsuarioPedidoId(pedido.getUsuario().getId(), pedido.getId());
+		List<Produto> produtos = new ArrayList<>();
+		for (UsuarioPedidoProdutos usuarioPedidoProdutos : listaIdProdutos) {
+			Optional<Produto> produto = produtoService.buscarPorId(usuarioPedidoProdutos.getProdutoId());
+			if(produto.isPresent()) {
+				produtos.add(produto.get());
+			}
+		}
+		pedidoDto.setProdutos(produtos);
+		
 		return pedidoDto;
 	}
 
