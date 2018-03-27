@@ -45,9 +45,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return Optional.ofNullable(this.usuarioRepository.findOne(id));
 	}
 
-	public Usuario converterDtoParaUsuario(CadastroUsuarioDto cadastroUsuarioDto, BindingResult result)
-			throws NoSuchAlgorithmException {
-		return usuarioComponent.converterDtoParaUsuario(cadastroUsuarioDto, result);
+	public Usuario converterDtoParaUsuario(CadastroUsuarioDto cadastroUsuarioDto) throws NoSuchAlgorithmException {
+		return usuarioComponent.converterDtoParaUsuario(cadastroUsuarioDto);
 	}
 
 	public CadastroUsuarioDto converterUsuarioParaDto(Usuario usuario) {

@@ -41,8 +41,7 @@ public interface UsuarioService {
 	 * @param result
 	 * @return Usuario
 	 */
-	Usuario converterDtoParaUsuario(CadastroUsuarioDto cadastroUsuarioDto, BindingResult result)
-			throws NoSuchAlgorithmException;
+	Usuario converterDtoParaUsuario(CadastroUsuarioDto cadastroUsuarioDto) throws NoSuchAlgorithmException;
 
 	/**
 	 * Popula o DTO de cadastro com os dados do usuario.

@@ -17,7 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.validation.BindingResult;
 
 import com.concrete.ecommerce.api.dtos.CadastroUsuarioDto;
 import com.concrete.ecommerce.api.entities.Usuario;
@@ -47,9 +46,10 @@ public class CadastroUsuarioControllerTest {
 	@WithMockUser
 	public void testCadastrarUsuario() throws Exception {
 		Usuario usuario = obterDadosUsuario();
-		BDDMockito.given(this.usuarioService.converterDtoParaUsuario(Mockito.any(CadastroUsuarioDto.class),
-				Mockito.any(BindingResult.class))).willReturn(usuario);
+		CadastroUsuarioDto cadastroUsuarioDto = obterDtoRetorno();
+		BDDMockito.given(this.usuarioService.converterDtoParaUsuario(Mockito.any(CadastroUsuarioDto.class))).willReturn(usuario);
 		BDDMockito.given(this.usuarioService.persistir(Mockito.any(Usuario.class))).willReturn(usuario);
+		BDDMockito.given(usuarioService.converterUsuarioParaDto(Mockito.any(Usuario.class))).willReturn(cadastroUsuarioDto);
 
 		mvc.perform(MockMvcRequestBuilders.post(URL_BASE).content(this.obterJsonRequisicaoPost())
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
@@ -57,8 +57,16 @@ public class CadastroUsuarioControllerTest {
 				.andExpect(jsonPath("$.data.id").value(ID_USUARIO))
 				.andExpect(jsonPath("$.data.nome").value(NOME_VALIDO))
 				.andExpect(jsonPath("$.data.email").value(EMAIL_VALIDO))
-				.andExpect(jsonPath("$.data.senha").value(SENHA_VALIDA))
 				.andExpect(jsonPath("$.errors").isEmpty());
+	}
+
+
+	private CadastroUsuarioDto obterDtoRetorno() {
+		CadastroUsuarioDto cadastroUsuarioDto = new CadastroUsuarioDto();
+		cadastroUsuarioDto.setId(ID_USUARIO);
+		cadastroUsuarioDto.setEmail(EMAIL_VALIDO);
+		cadastroUsuarioDto.setNome(NOME_VALIDO);
+		return cadastroUsuarioDto;
 	}
 
 

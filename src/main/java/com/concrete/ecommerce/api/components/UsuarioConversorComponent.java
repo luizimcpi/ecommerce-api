@@ -3,7 +3,6 @@ package com.concrete.ecommerce.api.components;
 import java.security.NoSuchAlgorithmException;
 
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
 
 import com.concrete.ecommerce.api.dtos.CadastroUsuarioDto;
 import com.concrete.ecommerce.api.entities.Usuario;
@@ -13,7 +12,7 @@ import com.concrete.ecommerce.api.utils.PasswordUtils;
 @Component
 public class UsuarioConversorComponent {
 	
-	public Usuario converterDtoParaUsuario(CadastroUsuarioDto cadastroUsuarioDto, BindingResult result) throws NoSuchAlgorithmException {
+	public Usuario converterDtoParaUsuario(CadastroUsuarioDto cadastroUsuarioDto) throws NoSuchAlgorithmException {
 		Usuario usuario = new Usuario();
 		usuario.setNome(cadastroUsuarioDto.getNome());
 		usuario.setEmail(cadastroUsuarioDto.getEmail());

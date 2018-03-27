@@ -49,7 +49,7 @@ public class CadastroUsuarioController {
 		Response<CadastroUsuarioDto> response = new Response<CadastroUsuarioDto>();
 
 		usuarioService.validarDadosExistentes(cadastroUsuarioDto, result);
-		Usuario usuario = usuarioService.converterDtoParaUsuario(cadastroUsuarioDto, result);
+		Usuario usuario = usuarioService.converterDtoParaUsuario(cadastroUsuarioDto);
 
 		if (result.hasErrors()) {
 			log.error("Erro validando dados de cadastro Usuario: {}", result.getAllErrors());
