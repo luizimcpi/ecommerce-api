@@ -13,7 +13,8 @@ CREATE TABLE `pedido` (
   `data_criacao` datetime NOT NULL,
   `descricao` varchar(255) DEFAULT NULL,
   `endereco_entrega` varchar(255) DEFAULT NULL,
-  `usuario_id` bigint(20) DEFAULT NULL
+  `usuario_id` bigint(20) DEFAULT NULL,
+  `valor_total` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `produto` (

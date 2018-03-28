@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.concrete.ecommerce.api.entities.Produto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
@@ -22,9 +21,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.validation.BindingResult;
 
 import com.concrete.ecommerce.api.dtos.PedidoDto;
 import com.concrete.ecommerce.api.entities.Pedido;
+import com.concrete.ecommerce.api.entities.Produto;
 import com.concrete.ecommerce.api.entities.Usuario;
 import com.concrete.ecommerce.api.services.PedidoService;
 import com.concrete.ecommerce.api.services.UsuarioService;
@@ -59,7 +60,9 @@ public class PedidoControllerTest {
 	public void testCadastrarPedido() throws Exception {
 		Pedido pedido = obterDadosPedido();
 		BDDMockito.given(this.usuarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Usuario()));
+		BDDMockito.given(this.pedidoService.converterDtoParaPedido(Mockito.any(PedidoDto.class), Mockito.any(BindingResult.class))).willReturn(pedido);
 		BDDMockito.given(this.pedidoService.persistir(Mockito.any(PedidoDto.class), Mockito.any(Pedido.class))).willReturn(pedido);
+		BDDMockito.given(this.pedidoService.converterPedidoDto(Mockito.any(Pedido.class))).willReturn(obterDadosDto());
 
 		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
 				.content(this.obterJsonRequisicaoPost())
@@ -72,21 +75,7 @@ public class PedidoControllerTest {
 				.andExpect(jsonPath("$.data.usuarioId").value(ID_USUARIO))
 				.andExpect(jsonPath("$.errors").isEmpty());
 	}
-	
-	@Test
-	@WithMockUser
-	public void testCadastrarPedidoUsuarioIdInvalido() throws Exception {
-		BDDMockito.given(this.usuarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.empty());
 
-		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
-				.content(this.obterJsonRequisicaoPost())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.errors").value("Usuário não encontrado. ID inexistente."))
-				.andExpect(jsonPath("$.data").isEmpty());
-	}
-	
 	@Test
 	@WithMockUser(username = "admin@admin.com", roles = {"ADMIN"})
 	public void testRemoverPedido() throws Exception {
@@ -107,6 +96,16 @@ public class PedidoControllerTest {
 				.andExpect(status().isForbidden());
 	}
 
+
+	private PedidoDto obterDadosDto() {
+		PedidoDto pedidoDto = new PedidoDto();
+		pedidoDto.setId(Optional.of(ID_PEDIDO));
+		pedidoDto.setDescricao(DESCRICAO_PEDIDO);
+		pedidoDto.setEnderecoEntrega(ENDERECO_PEDIDO);
+		pedidoDto.setUsuarioId(ID_USUARIO);
+		return pedidoDto;
+	}
+	
 	private String obterJsonRequisicaoPost() throws JsonProcessingException {
 		PedidoDto pedidoDto = new PedidoDto();
 		pedidoDto.setId(null);

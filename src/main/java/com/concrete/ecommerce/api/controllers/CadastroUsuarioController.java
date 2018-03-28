@@ -29,7 +29,7 @@ public class CadastroUsuarioController {
 	private final UsuarioService usuarioService;
 
 	@Autowired
-	public CadastroUsuarioController(UsuarioService usuarioService) {
+	public CadastroUsuarioController(final UsuarioService usuarioService) {
 		this.usuarioService = usuarioService;
 	}
 

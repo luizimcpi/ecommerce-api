@@ -24,6 +24,7 @@ public class Pedido implements Serializable {
 	private String enderecoEntrega;
 	private Date dataCriacao;
 	private Usuario usuario;
+	private double valorTotal;
 
 	public Pedido() {
 	}
@@ -73,6 +74,15 @@ public class Pedido implements Serializable {
 	public void setEnderecoEntrega(String enderecoEntrega) {
 		this.enderecoEntrega = enderecoEntrega;
 	}
+	
+	@Column(name = "valor_total", nullable = false)
+	public double getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(double valorTotal) {
+		this.valorTotal = valorTotal;
+	}
 
 	@PrePersist
 	public void prePersist() {
@@ -83,7 +93,7 @@ public class Pedido implements Serializable {
 	@Override
 	public String toString() {
 		return "Pedido [id=" + id + ", descricao=" + descricao + ", enderecoEntrega=" + enderecoEntrega
-				+ ", dataCriacao=" + dataCriacao + ", usuario=" + usuario + "]";
+				+ ", dataCriacao=" + dataCriacao + ", usuario=" + usuario + ", valorTotal=" + valorTotal + "]";
 	}
 
 }

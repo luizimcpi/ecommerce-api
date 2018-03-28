@@ -37,8 +37,7 @@ public class PedidoServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		BDDMockito
-				.given(this.pedidoRepository.findByUsuarioId(Mockito.anyLong(), Mockito.any(PageRequest.class)))
+		BDDMockito.given(this.pedidoRepository.findByUsuarioId(Mockito.anyLong(), Mockito.any(PageRequest.class)))
 				.willReturn(new PageImpl<Pedido>(new ArrayList<Pedido>()));
 		BDDMockito.given(this.pedidoRepository.findOne(Mockito.anyLong())).willReturn(new Pedido());
 		BDDMockito.given(this.pedidoRepository.save(Mockito.any(Pedido.class))).willReturn(new Pedido());
@@ -57,9 +56,9 @@ public class PedidoServiceTest {
 	}
 
 	@Test
-	public void testPersistirLancamento() {
-		Pedido pedido = this.pedidoService.persistir(new PedidoDto(), new Pedido());
-		assertNotNull(pedido);
+	public void testPersistirPedido() {
+		Pedido pedidoRetorno = this.pedidoService.persistir(new PedidoDto(), new Pedido());
+		assertNotNull(pedidoRetorno);
 	}
 
 }
