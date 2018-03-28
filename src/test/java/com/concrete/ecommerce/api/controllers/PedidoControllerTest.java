@@ -74,20 +74,6 @@ public class PedidoControllerTest {
 	}
 	
 	@Test
-	@WithMockUser
-	public void testCadastrarPedidoUsuarioIdInvalido() throws Exception {
-		BDDMockito.given(this.usuarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.empty());
-
-		mvc.perform(MockMvcRequestBuilders.post(URL_BASE)
-				.content(this.obterJsonRequisicaoPost())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.errors").value("Usuário não encontrado. ID inexistente."))
-				.andExpect(jsonPath("$.data").isEmpty());
-	}
-	
-	@Test
 	@WithMockUser(username = "admin@admin.com", roles = {"ADMIN"})
 	public void testRemoverPedido() throws Exception {
 		BDDMockito.given(this.pedidoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Pedido()));

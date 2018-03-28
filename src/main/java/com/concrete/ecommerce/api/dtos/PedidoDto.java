@@ -12,6 +12,7 @@ public class PedidoDto {
 	private String enderecoEntrega;
 	private Long usuarioId;
 	private List<Produto> produtos;
+	private double valorTotal;
 
 	public PedidoDto() {
 	}
@@ -52,6 +53,14 @@ public class PedidoDto {
 		return produtos;
 	}
 
+	public double getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(double valorTotal) {
+		this.valorTotal = valorTotal;
+	}
+
 	public void setProdutos(List<Produto> produtos) {
 		this.produtos = produtos;
 	}
@@ -59,7 +68,7 @@ public class PedidoDto {
 	@Override
 	public String toString() {
 		return "PedidoDto [id=" + id + ", descricao=" + descricao + ", enderecoEntrega=" + enderecoEntrega
-				+ ", usuarioId=" + usuarioId + ", produtos=" + produtos + "]";
+				+ ", usuarioId=" + usuarioId + ", produtos=" + produtos + ", valorTotal=" + valorTotal + "]";
 	}
 
 }
