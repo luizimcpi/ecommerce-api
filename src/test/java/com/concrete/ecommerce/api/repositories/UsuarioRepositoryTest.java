@@ -47,6 +47,7 @@ public class UsuarioRepositoryTest {
 
 	private Usuario obterDadosUsuario() throws NoSuchAlgorithmException {
 		Usuario usuario = new Usuario();
+		usuario.setId(ID);
 		usuario.setNome("Fulano de Tal");
 		usuario.setPerfil(PerfilEnum.ROLE_USUARIO);
 		usuario.setSenha(PasswordUtils.gerarBCrypt("123456"));
